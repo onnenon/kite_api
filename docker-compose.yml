@@ -1,0 +1,35 @@
+version: '3'
+services:
+  db:
+    restart: always
+    image: "postgres:9.6"
+    environment:
+      POSTGRES_USER: "admin"
+      POSTGRES_PASSWORD: "pass"
+      POSTGRES_DB: "forum_db"
+    ports:
+      - 5432:5432
+    volumes:
+      - "./db:/docker-entrypoint-initdb.d:z"
+  api:
+    build: .
+    stdin_open: true
+    tty: true
+    depends_on:
+      - db
+    environment:
+      FLASK_APP: "forum_api"
+      FLASK_DEBUG: 1
+      LAMP_DB_HOST: "db"
+      LAMP_DB_PORT: "5432"
+      LAMP_DB_USERNAME: "admin"
+      LAMP_DB_PASSWORD: "pass"
+      LAMP_DB_NAME: "forum_db"
+      FORUM_ADMIN: "fadmin"
+      FORUM_ADMIN_PASS: "pass"
+      SPY_LOG_LOGGER: "pretty-no-meta"
+      SPY_LOG_LEVEL: "DEBUG"
+    ports:
+      - 5000:5000
+    volumes:
+      - ".:/opt:z"

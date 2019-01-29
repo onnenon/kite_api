@@ -17,6 +17,12 @@ class Auth(Resource):
         return {"message": "Invalid Credentials"}, 403
 
 
+class Refresh(Resource):
+    def post(self):
+        pass
+
+
 auth_bp = Blueprint("auth", __name__)
 api = Api(auth_bp)
-api.add_resource(Auth, "/api/auth", endpoint="api-auth")
+api.add_resource(Auth, "/api/auth/login")
+api.add_resource(Refresh, "/api/auth/refresh")

@@ -1,10 +1,11 @@
 from flask import Flask
 
-# from flask_sqlalchemy import SQLAlchemy
-from forum_api.resources.auth import auth_bp
+from flask_sqlalchemy import SQLAlchemy
+from forum_api.resources import register_blueprints
 
 app = Flask(__name__)
+app.config.from_object("forum_api.settings")
 
-# db = SQLAlchemy(app)
+db = SQLAlchemy(app)
 
-app.register_blueprint(auth_bp)
+register_blueprints(app)
