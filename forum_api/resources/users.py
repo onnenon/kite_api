@@ -2,8 +2,8 @@
 from flask import Blueprint
 from flask_restful import Api, request, Resource
 
-from forum_api.settings import LOGGER
 from forum_api.models import User
+from forum_api.settings import LOGGER, FORUM_ADMIN
 
 
 class UserLookup(Resource):
@@ -39,6 +39,7 @@ class UserLookup(Resource):
 class UserList(Resource):
     def post(self):
         """Create a new user."""
+
         return {"message": "User created"}, 200
 
     def get(self):

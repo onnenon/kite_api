@@ -1,6 +1,9 @@
 Flask
 Flask-SQLAlchemy
 Flask-Restful
-spylogger
-psycopg2 
+spylogger[pretty]
+psycopg2-binary
+bcrypt
+PyJWT
+
 # -e .

@@ -11,8 +11,10 @@ def get_uuid():
 
 def validate_uuid(uuid_string):
     """Validates a given string as a valid UUID
+
     Args:
         uuid_string: The string to validate
+
     Returns:
         True if a valid UUID, else false
     """
@@ -20,4 +22,4 @@ def validate_uuid(uuid_string):
         UUID(uuid_string, version=4)
         return True
     except:
-        return False
+        return

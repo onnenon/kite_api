@@ -1,9 +1,14 @@
 from datetime import datetime
 
+import bcrypt
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.postgresql import UUID
 
-from forum_api import db
+from forum_api.settings import LOGGER
 from forum_api.utils import get_uuid
+
+
+db = SQLAlchemy()
 
 
 class User(db.Model):
@@ -53,3 +58,15 @@ class Reply(db.Model):
     date = db.Column(
         db.DateTime(timezone=True), default=datetime.utcnow, nullable=False
     )
+
+
+def create_admin(username, password):
+    admin = User.query.filter_by(username=username).first()
+    if not admin:
+        hashed = bcrypt.hashpw(password.encode("utf8"), bcrypt.gensalt())
+        LOGGER.debug({"Hash": hashed})
+        LOGGER.debug({"username": username})
+        LOGGER.debug({"password": password})
+        admin = User(username=username, pw_hash=hashed, is_admin=True)
+        db.session.add(admin)
+        db.session.commit()
