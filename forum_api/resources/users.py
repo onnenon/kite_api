@@ -16,7 +16,9 @@ class UserLookup(Resource):
         LOGGER.debug({"Requested user": username})
         user = User.query.filter_by(username=username).first()
         if user is None:
-            return {"message": "user not fount"}, 404
+            return {"message": "user not found"}, 404
+
+        # Logic to create json return object
         return {"message": f"{username} datas ..."}, 200
 
     def put(self, username):

@@ -4,11 +4,9 @@ import bcrypt
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.postgresql import UUID
 
+from forum_api import db
 from forum_api.settings import LOGGER
 from forum_api.utils import get_uuid
-
-
-db = SQLAlchemy()
 
 
 class User(db.Model):
@@ -41,7 +39,7 @@ class Post(db.Model):
     body = db.Column(db.String(255), nullable=False)
     author = db.Column(db.String(30), db.ForeignKey("users.username"), nullable=False)
     topic_id = db.Column(UUID, db.ForeignKey("topics.id"), nullable=False)
-    date = db.Column(
+    date_ = db.Column(
         db.DateTime(timezone=True), default=datetime.utcnow, nullable=False
     )
 
@@ -55,7 +53,7 @@ class Reply(db.Model):
     body = db.Column(db.String(255), nullable=False)
     author = db.Column(db.String(30), db.ForeignKey("users.username"), nullable=False)
     post_id = db.Column(UUID, db.ForeignKey("posts.id"), nullable=False)
-    date = db.Column(
+    date_ = db.Column(
         db.DateTime(timezone=True), default=datetime.utcnow, nullable=False
     )
 
