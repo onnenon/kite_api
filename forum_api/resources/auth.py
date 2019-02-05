@@ -1,6 +1,8 @@
+import json
 import time
 import bcrypt
 import jwt
+
 
 from flask import Blueprint
 from flask_restful import Api, request, Resource
@@ -16,14 +18,19 @@ class Auth(Resource):
         LOGGER.debug({username: password})
 
         user = User.query.filter_by(username=username).first()
-        if bcrypt.checkpw(password, user.hashed_password):
-            perm = get_permissions(user)
-            LOGGER.debug({"Permissions": perm})
+        if user is not None:
+            try:
+                if bcrypt.checkpw(password.encode("utf8"), user.pw_hash):
+                    perm = get_permissions(user)
+                    LOGGER.debug({"Permissions": perm})
 
-            payload = {"sub": username, "perm": perm, "iat": int(time.time())}
-            token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
-            LOGGER.debug({"Token": token})
-            return {"jwt": token}, 200
+                    payload = {"sub": username, "perm": perm, "iat": int(time.time())}
+                    token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
+                    LOGGER.debug({"Token": token})
+                    return {"access_token": token.decode("utf8")}, 200
+            except Exception as e:
+                LOGGER.error({"Exception": e})
+                return {"message": "server error"}, 500
         return {"message": "Invalid Credentials"}, 403
 
 
@@ -37,7 +44,7 @@ def get_permissions(user):
         return "admin"
     if user.is_mod:
         return "mod"
-    return ""
+    return "user"
 
 
 auth_bp = Blueprint("auth", __name__)
