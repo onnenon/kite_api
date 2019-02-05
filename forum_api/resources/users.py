@@ -1,9 +1,36 @@
 """API Endpoints relating to users"""
-from flask import Blueprint
-from flask_restful import Api, request, Resource
+import bcrypt
 
-from forum_api.models import User
+from flask import Blueprint
+from flask_restful import Api, request, Resource, reqparse
+
+from forum_api.models import db, User
 from forum_api.settings import LOGGER, FORUM_ADMIN
+
+u_post_parse = reqparse.RequestParser()
+
+u_post_parse.add_argument(
+    "username",
+    dest="username",
+    location="json",
+    required=True,
+    help="Type: String. The new user's username.",
+)
+
+u_post_parse.add_argument(
+    "password",
+    dest="password",
+    location="json",
+    required=True,
+    help="Type: String. The new user's password.",
+)
+u_post_parse.add_argument(
+    "bio",
+    dest="bio",
+    location="json",
+    required=False,
+    help="Type: String. The new user's bio.",
+)
 
 
 class UserLookup(Resource):
@@ -42,11 +69,33 @@ class UserList(Resource):
     def post(self):
         """Create a new user."""
 
+        args = u_post_parse.parse_args(strict=True)
+        LOGGER.info({"Args": args})
+
+        user = User.query.filter_by(username=args.username).first()
+
+        if user is None:
+            try:
+                hashed = bcrypt.hashpw(args.password.encode("utf8"), bcrypt.gensalt())
+                record = User(username=args.username, pw_hash=hashed, bio=args.bio)
+                db.session.add(record)
+                db.session.commit()
+                return {"message": "Created"}, 200
+            except Exception as e:
+                LOGGER.error({"Exception": e})
+                return {"message": e}, 500
+        return {"message": "User exists"}, 400
+
         return {"message": "User created"}, 200
 
     def get(self):
         """Get list of all users."""
-        return {"message": "all users"}, 200
+        user_filter = {}
+
+        users = User.query
+
+        users_json = [res.to_json() for res in users]
+        return {"users": users_json}, 200
 
 
 users_bp = Blueprint("users", __name__)

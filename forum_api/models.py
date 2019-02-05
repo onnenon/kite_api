@@ -1,6 +1,5 @@
 from datetime import datetime
 
-import bcrypt
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.postgresql import UUID
 
@@ -17,8 +16,18 @@ class User(db.Model):
     is_admin = db.Column(db.Boolean(), nullable=False, default=False)
     is_mod = db.Column(db.Boolean(), nullable=False, default=False)
     post_count = db.Column(db.Integer(), nullable=False, default=0)
+    bio = db.Column(db.String(50), default="")
 
     posts = db.relationship("Post", backref="auth", cascade="all")
+
+    def to_json(self):
+        return {
+            "username": self.username,
+            "is_admin": self.is_admin,
+            "is_mod": self.is_mod,
+            "post_count": self.post_count,
+            "bio": self.bio,
+        }
 
 
 class Topic(db.Model):
@@ -29,6 +38,9 @@ class Topic(db.Model):
     descript = db.Column(db.String(150))
 
     posts = db.relationship("Post", backref="topic", cascade="all")
+
+    def to_json(self):
+        return {"id": self.id, "title": self.title, "descript": self.descript}
 
 
 class Post(db.Model):
@@ -45,6 +57,16 @@ class Post(db.Model):
 
     replies = db.relationship("Reply", backref="post", cascade="all")
 
+    def to_json(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "body": self.body,
+            "author": self.author,
+            "topic_id": self.topic_id,
+            "date": self.date_,
+        }
+
 
 class Reply(db.Model):
     __tablename__ = "replies"
@@ -57,14 +79,12 @@ class Reply(db.Model):
         db.DateTime(timezone=True), default=datetime.utcnow, nullable=False
     )
 
+    def to_json(self):
+        return {
+            "id": self.id,
+            "body": self.body,
+            "author": self.author,
+            "post_id": self.post_id,
+            "date": self.date_,
+        }
 
-def create_admin(username, password):
-    admin = User.query.filter_by(username=username).first()
-    if not admin:
-        hashed = bcrypt.hashpw(password.encode("utf8"), bcrypt.gensalt())
-        LOGGER.debug({"Hash": hashed})
-        LOGGER.debug({"username": username})
-        LOGGER.debug({"password": password})
-        admin = User(username=username, pw_hash=hashed, is_admin=True)
-        db.session.add(admin)
-        db.session.commit()

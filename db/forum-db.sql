@@ -6,7 +6,8 @@ CREATE TABLE users
     pw_hash bytea NOT NULL,
     is_admin boolean DEFAULT false NOT NULL,
     is_mod boolean DEFAULT false NOT NULL,
-    post_count Integer DEFAULT 0
+    post_count integer DEFAULT 0,
+    bio text
 );
 
 CREATE TABLE topics
