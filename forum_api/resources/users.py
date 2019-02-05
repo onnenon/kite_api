@@ -58,7 +58,7 @@ put_parser.add_argument(
     required=False,
     help="Type: String. The user's updated bio.",
 )
-post_parser.add_argument(
+put_parser.add_argument(
     "password",
     dest="password",
     location="json",
@@ -135,11 +135,11 @@ class UserList(Resource):
                 record = User(username=args.username, pw_hash=hashed, bio=args.bio)
                 db.session.add(record)
                 db.session.commit()
-                return {"message": "Created"}, 200
+                return {"message": f"user {args.username} created"}, 200
             except Exception as e:
                 LOGGER.error({"Exception": e})
                 return {"message": e}, 500
-        return {"message": "User exists"}, 400
+        return {"message": f"user {args.username} exists"}, 400
 
     def get(self):
         """Get list of all users."""
