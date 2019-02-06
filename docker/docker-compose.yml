@@ -13,8 +13,7 @@ services:
       - "./db:/docker-entrypoint-initdb.d:z"
   api:
     build: .
-    stdin_open: true
-    tty: true
+    restart: always
     depends_on:
       - db
     environment:
