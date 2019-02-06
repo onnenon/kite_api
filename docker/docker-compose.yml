@@ -12,7 +12,7 @@ services:
     volumes:
       - "./db:/docker-entrypoint-initdb.d:z"
   api:
-    build: .
+    image: koozie/kite
     restart: always
     depends_on:
       - db
