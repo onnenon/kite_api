@@ -16,7 +16,7 @@ class UserLookup(Resource):
         LOGGER.debug({"Requested user": username})
         user = User.query.filter_by(username=username).first()
         if user is None:
-            return {"message": "user not fount"}, 404
+            return {"message": "user not found"}, 404
         return {"message": f"{username} datas ..."}, 200
 
     def put(self, username):
@@ -25,6 +25,13 @@ class UserLookup(Resource):
         Args:
             username: The user to be updated.
         """
+
+
+
+
+
+
+
         return {"message": f"{username} updated"}, 200
 
     def delete(self, username):
@@ -33,16 +40,32 @@ class UserLookup(Resource):
         Args:
             username: The user to be deleted.
         """
+
+
+
+
+
+
         return {"message": f"{username} deleted"}, 200
 
 
 class UserList(Resource):
     def post(self):
         """Create a new user."""
+
+
+
+
+
         return {"message": "User created"}, 200
 
     def get(self):
         """Get list of all users."""
+
+
+
+
+
         return {"message": "all users"}, 200
 
 
