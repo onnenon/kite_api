@@ -20,15 +20,14 @@ services:
     environment:
       FLASK_APP: "forum_api"
       FLASK_DEBUG: 1
-      LAMP_DB_HOST: "db"
-      LAMP_DB_PORT: "5432"
-      LAMP_DB_USERNAME: "admin"
-      LAMP_DB_PASSWORD: "pass"
-      LAMP_DB_NAME: "forum_db"
+      API_DB_HOST: "db"
+      API_DB_PORT: "5432"
+      API_DB_USERNAME: "admin"
+      API_DB_PASSWORD: "pass"
+      API_DB_NAME: "forum_db"
       FORUM_ADMIN: "fadmin"
       FORUM_ADMIN_PASS: "pass"
       SPY_LOG_LOGGER: "pretty-no-meta"
-      SPY_LOG_LEVEL: "DEBUG"
     ports:
       - 5000:5000
     volumes:

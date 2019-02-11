@@ -1,8 +1,10 @@
 from datetime import datetime
 
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.postgresql import UUID
 
 from forum_api import db
+from forum_api.settings import LOGGER
 from forum_api.utils import get_uuid
 
 
@@ -14,8 +16,18 @@ class User(db.Model):
     is_admin = db.Column(db.Boolean(), nullable=False, default=False)
     is_mod = db.Column(db.Boolean(), nullable=False, default=False)
     post_count = db.Column(db.Integer(), nullable=False, default=0)
+    bio = db.Column(db.String(50), default="")
 
     posts = db.relationship("Post", backref="auth", cascade="all")
+
+    def to_json(self):
+        return {
+            "username": self.username,
+            "is_admin": self.is_admin,
+            "is_mod": self.is_mod,
+            "post_count": self.post_count,
+            "bio": self.bio,
+        }
 
 
 class Topic(db.Model):
@@ -27,6 +39,9 @@ class Topic(db.Model):
 
     posts = db.relationship("Post", backref="topic", cascade="all")
 
+    def to_json(self):
+        return {"id": self.id, "title": self.title, "descript": self.descript}
+
 
 class Post(db.Model):
     __tablename__ = "posts"
@@ -36,11 +51,21 @@ class Post(db.Model):
     body = db.Column(db.String(255), nullable=False)
     author = db.Column(db.String(30), db.ForeignKey("users.username"), nullable=False)
     topic_id = db.Column(UUID, db.ForeignKey("topics.id"), nullable=False)
-    date = db.Column(
+    date_ = db.Column(
         db.DateTime(timezone=True), default=datetime.utcnow, nullable=False
     )
 
     replies = db.relationship("Reply", backref="post", cascade="all")
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "body": self.body,
+            "author": self.author,
+            "topic_id": self.topic_id,
+            "date": self.date_,
+        }
 
 
 class Reply(db.Model):
@@ -50,6 +75,16 @@ class Reply(db.Model):
     body = db.Column(db.String(255), nullable=False)
     author = db.Column(db.String(30), db.ForeignKey("users.username"), nullable=False)
     post_id = db.Column(UUID, db.ForeignKey("posts.id"), nullable=False)
-    date = db.Column(
+    date_ = db.Column(
         db.DateTime(timezone=True), default=datetime.utcnow, nullable=False
     )
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "body": self.body,
+            "author": self.author,
+            "post_id": self.post_id,
+            "date": self.date_,
+        }
+
