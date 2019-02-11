@@ -13,6 +13,9 @@ from forum_api.settings import LOGGER, SECRET_KEY
 
 class Auth(Resource):
     def post(self):
+        if request.authorization is None:
+            return {"message": "Basic auth header missing"}, 400
+
         username = request.authorization.get("username")
         password = request.authorization.get("password")
         LOGGER.debug({username: password})

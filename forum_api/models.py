@@ -33,14 +33,13 @@ class User(db.Model):
 class Topic(db.Model):
     __tablename__ = "topics"
 
-    id = db.Column(UUID, primary_key=True, default=get_uuid)
-    title = db.Column(db.String(30), unique=True, nullable=False)
+    name = db.Column(db.String(30), primary_key=True, nullable=False)
     descript = db.Column(db.String(150))
 
     posts = db.relationship("Post", backref="topic", cascade="all")
 
     def to_json(self):
-        return {"id": self.id, "title": self.title, "descript": self.descript}
+        return {"name": self.name, "descript": self.descript}
 
 
 class Post(db.Model):
@@ -50,7 +49,7 @@ class Post(db.Model):
     title = db.Column(db.String(30), nullable=False)
     body = db.Column(db.String(255), nullable=False)
     author = db.Column(db.String(30), db.ForeignKey("users.username"), nullable=False)
-    topic_id = db.Column(UUID, db.ForeignKey("topics.id"), nullable=False)
+    topic_name = db.Column(db.String(30), db.ForeignKey("topics.name"), nullable=False)
     date_ = db.Column(
         db.DateTime(timezone=True), default=datetime.utcnow, nullable=False
     )

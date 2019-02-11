@@ -12,9 +12,8 @@ services:
     volumes:
       - "./db:/docker-entrypoint-initdb.d:z"
   api:
-    build: .
-    stdin_open: true
-    tty: true
+    image: koozie/kite
+    restart: always
     depends_on:
       - db
     environment:
@@ -29,6 +28,4 @@ services:
       FORUM_ADMIN_PASS: "pass"
       SPY_LOG_LOGGER: "pretty-no-meta"
     ports:
-      - 5000:5000
-    volumes:
-      - ".:/opt:z"
+      - 80:5000
