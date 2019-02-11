@@ -12,8 +12,7 @@ CREATE TABLE users
 
 CREATE TABLE topics
 (
-    id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
-    title text,
+    name text PRIMARY KEY,
     descript text
 );
 
@@ -23,7 +22,7 @@ CREATE TABLE posts
     title text,
     body text,
     author text REFERENCES users(username) ON DELETE CASCADE,
-    topic_id uuid REFERENCES topics(id) ON DELETE CASCADE,
+    topic_id text REFERENCES topics(name) ON DELETE CASCADE,
     date_ timestamp with time zone DEFAULT now()
 );
 
