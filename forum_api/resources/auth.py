@@ -1,11 +1,10 @@
 import json
 import time
+
 import bcrypt
 import jwt
-
-
 from flask import Blueprint
-from flask_restful import Api, request, Resource
+from flask_restful import Api, Resource, request
 
 from forum_api.models import User
 from forum_api.settings import LOGGER, SECRET_KEY

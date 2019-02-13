@@ -1,8 +1,10 @@
 """API Endpoints relating to topics"""
 from flask import Blueprint
-from flask_restful import Api, request, Resource
+from flask_restful import Api, Resource, request
+
+from forum_api.models import Topic, db
 from forum_api.settings import LOGGER
-from forum_api.models import db, Topic
+
 
 class TopicsLookup(Resource):
     def get(self, topicName):

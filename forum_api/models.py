@@ -86,4 +86,3 @@ class Reply(db.Model):
             "post_id": self.post_id,
             "date": self.date_,
         }
-

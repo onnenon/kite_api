@@ -1,11 +1,10 @@
 """API Endpoints relating to users"""
 import bcrypt
-
 from flask import Blueprint
-from flask_restful import Api, request, Resource, reqparse
+from flask_restful import Api, Resource, reqparse, request
 
-from forum_api.models import db, User
-from forum_api.settings import LOGGER, FORUM_ADMIN
+from forum_api.models import User, db
+from forum_api.settings import FORUM_ADMIN, LOGGER
 
 post_parser = reqparse.RequestParser()
 
