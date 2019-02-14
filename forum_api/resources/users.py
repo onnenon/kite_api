@@ -115,7 +115,7 @@ class UserLookup(Resource):
         if user is not None:
             db.session.delete(user)
             db.session.commit()
-            return {"message": f"{username} deleted"}, 200
+            return {"message": f"{username} deleted"}, 204
         return {"message": "user not found"}, 404
 
 
@@ -134,7 +134,7 @@ class UserList(Resource):
                 record = User(username=args.username, pw_hash=hashed, bio=args.bio)
                 db.session.add(record)
                 db.session.commit()
-                return {"message": f"user {args.username} created"}, 200
+                return {"message": f"user {args.username} created"}, 201
             except Exception as e:
                 LOGGER.error({"Exception": e})
                 return {"message": e}, 500
