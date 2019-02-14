@@ -23,3 +23,14 @@ def validate_uuid(uuid_string):
         return True
     except:
         return
+
+
+def validate_length(max_length, min_length, string_type):
+    def validate(s):
+        if len(s) >= min_length and len(s) <= max_length:
+            return s
+        raise ValidationError(
+            f"{string_type} must be between {max_length} and {min_length} characters long"
+        )
+
+    return validate

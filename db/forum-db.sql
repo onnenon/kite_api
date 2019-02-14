@@ -22,7 +22,7 @@ CREATE TABLE posts
     title text,
     body text,
     author text REFERENCES users(username) ON DELETE CASCADE,
-    topic_id text REFERENCES topics(name) ON DELETE CASCADE,
+    topic_name text REFERENCES topics(name) ON DELETE CASCADE,
     date_ timestamp with time zone DEFAULT now()
 );
 

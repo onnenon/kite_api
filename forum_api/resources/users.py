@@ -2,7 +2,6 @@
 import bcrypt
 from flask import Blueprint
 from flask_restful import Api, Resource, reqparse, request
-
 from forum_api.models import User, db
 from forum_api.settings import FORUM_ADMIN, LOGGER
 
@@ -79,7 +78,7 @@ class UserLookup(Resource):
             user_json = user.to_json()
             return {"user": user_json}, 200
 
-        return {"message": "user not found"}, 404
+        return {"error": "user not found"}, 404
 
     def put(self, username):
         """Update user info.
@@ -103,7 +102,7 @@ class UserLookup(Resource):
             db.session.commit()
             return {"message": f"{username} updated"}, 200
 
-        return {"message": "user not found"}, 404
+        return {"error": "user not found"}, 404
 
     def delete(self, username):
         """Delete a user.
@@ -116,13 +115,21 @@ class UserLookup(Resource):
             db.session.delete(user)
             db.session.commit()
             return {"message": f"{username} deleted"}, 204
-        return {"message": "user not found"}, 404
+        return {"error": "user not found"}, 404
 
 
 class UserList(Resource):
     def post(self):
-        """Create a new user."""
+        """Create a new user.
 
+        Required in Payload:
+            userame: Username of the new user to be created.
+            password: Passowrd of the user to be created.
+
+        Optional in Payload:
+            bio: Bio of the user to be created.
+
+        """
         args = post_parser.parse_args(strict=True)
         LOGGER.info({"Args": args})
 
@@ -137,8 +144,8 @@ class UserList(Resource):
                 return {"message": f"user {args.username} created"}, 201
             except Exception as e:
                 LOGGER.error({"Exception": e})
-                return {"message": e}, 500
-        return {"message": f"user {args.username} exists"}, 400
+                return {"error": e}, 500
+        return {"error": f"user {args.username} exists"}, 400
 
     def get(self):
         """Get list of all users."""
