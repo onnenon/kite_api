@@ -62,7 +62,7 @@ class Post(db.Model):
             "title": self.title,
             "body": self.body,
             "author": self.author,
-            "topic_id": self.topic_id,
+            "topic_name": self.topic_name,
             "date": self.date_,
         }
 
