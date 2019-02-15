@@ -12,7 +12,7 @@ from forum_api.settings import LOGGER, SECRET_KEY
 class Auth(Resource):
     def post(self):
         if request.authorization is None:
-            return {"message": "Basic auth header missing"}, 400
+            return {"errors": {"detail": "Basic auth header missing"}}, 400
 
         username = request.authorization.get("username")
         password = request.authorization.get("password")
@@ -28,11 +28,11 @@ class Auth(Resource):
                     payload = {"sub": username, "perm": perm, "iat": int(time.time())}
                     token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
                     LOGGER.debug({"Token": token})
-                    return {"access_token": token.decode("utf8")}, 200
+                    return {"data": {"access_token": token.decode("utf8")}}, 200
             except Exception as e:
                 LOGGER.error({"Exception": e})
-                return {"message": "server error"}, 500
-        return {"message": "Invalid Credentials"}, 403
+                return {"errors": {"detail": "server error"}}, 500
+        return {"errors": {"detail": "Invalid Credentials"}}, 403
 
 
 class Refresh(Resource):

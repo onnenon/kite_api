@@ -14,7 +14,6 @@ post_parser.add_argument(
     required=True,
     help="Type: String. The new user's username, required.",
 )
-
 post_parser.add_argument(
     "bio",
     dest="bio",
@@ -22,7 +21,6 @@ post_parser.add_argument(
     required=False,
     help="Type: String. The new user's bio.",
 )
-
 post_parser.add_argument(
     "password",
     dest="password",
@@ -76,7 +74,7 @@ class UserLookup(Resource):
         user = User.query.filter_by(username=username).first()
         if user is not None:
             user_json = user.to_json()
-            return {"user": user_json}, 200
+            return {"data": user_json}, 200
 
         return {"error": "user not found"}, 404
 
@@ -114,7 +112,7 @@ class UserLookup(Resource):
         if user is not None:
             db.session.delete(user)
             db.session.commit()
-            return {"message": f"{username} deleted"}, 204
+            return {"message": f"{username} deleted"}, 200
         return {"error": "user not found"}, 404
 
 
@@ -152,7 +150,7 @@ class UserList(Resource):
         user_filter = {}
         users = User.query
         users_json = [res.to_json() for res in users]
-        return {"users": users_json}, 200
+        return {"data": users_json}, 200
 
 
 users_bp = Blueprint("users", __name__)
