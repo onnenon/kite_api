@@ -80,6 +80,14 @@ class PostUpdate(Resource):
         """
         pass
 
+    def delete(self, post_id):
+        """Delete a specific post from the database.
+
+        Args:
+            post_id: UUID of the post to delete.
+        """
+        pass
+
 
 class Posts(Resource):
     def get(self):
