@@ -3,7 +3,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from forum_api.resources import register_blueprints
 from forum_api.models import db, User
-from forum_api.settings import FORUM_ADMIN
+from forum_api.settings import FORUM_ADMIN, LOGGER
 
 
 def create_app():
@@ -27,4 +27,3 @@ def create_app():
             )
             admin.save()
     return app
-

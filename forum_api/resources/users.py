@@ -2,9 +2,10 @@
 import bcrypt
 from flask import Blueprint
 from flask_restful import Api, Resource, request
+
 from forum_api.models import User, db
+from forum_api.parsers.user_parse import post_parser, put_parser
 from forum_api.settings import FORUM_ADMIN, LOGGER
-from forum_api.parsers.user_parse import put_parser, post_parser
 
 
 class UserLookupV1(Resource):
