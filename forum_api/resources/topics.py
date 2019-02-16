@@ -2,7 +2,7 @@
 from flask import Blueprint
 from flask_restful import Api, request, Resource, reqparse
 from forum_api.settings import LOGGER
-from forum_api.models import db, Topic
+
 
 
 put_parser = reqparse.RequestParser()
