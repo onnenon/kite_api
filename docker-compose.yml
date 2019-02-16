@@ -9,8 +9,6 @@ services:
       POSTGRES_DB: "forum_db"
     ports:
       - 5432:5432
-    volumes:
-      - "./db:/docker-entrypoint-initdb.d:z"
   api:
     build: .
     stdin_open: true
@@ -18,7 +16,7 @@ services:
     depends_on:
       - db
     environment:
-      FLASK_APP: "forum_api"
+      FLASK_APP: "forum_api:create_app()"
       FLASK_DEBUG: 1
       API_DB_HOST: "db"
       API_DB_PORT: "5432"

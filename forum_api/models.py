@@ -1,10 +1,13 @@
 from datetime import datetime
 
 from flask_sqlalchemy import SQLAlchemy
-from forum_api import db
+
+# from forum_api import db
 from forum_api.settings import LOGGER
 from forum_api.utils import get_uuid
 from sqlalchemy.dialects.postgresql import UUID
+
+db = SQLAlchemy()
 
 
 class User(db.Model):
@@ -18,6 +21,22 @@ class User(db.Model):
     bio = db.Column(db.String(50), default="")
 
     posts = db.relationship("Post", backref="auth", cascade="all")
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit
+
+    @staticmethod
+    def get_all():
+        return User.query.all()
+
+    @staticmethod
+    def get_user(username):
+        return User.query.filter_by(username=username).first()
 
     def to_json(self):
         return {
