@@ -16,7 +16,7 @@ services:
     depends_on:
       - db
     environment:
-      FLASK_APP: "forum_api:create_app()"
+      FLASK_APP: "forum_api"
       FLASK_DEBUG: 1
       API_DB_HOST: "db"
       API_DB_PORT: "5432"
