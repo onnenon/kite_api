@@ -2,7 +2,6 @@
 
 from flask import Blueprint
 from flask_restful import Api, Resource, reqparse, request
-
 from forum_api.models import Post, Topic, User, db
 from forum_api.parsers.post_parse import post_parser, put_parser
 from forum_api.settings import LOGGER

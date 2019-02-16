@@ -1,10 +1,9 @@
 from datetime import datetime
 
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.dialects.postgresql import UUID
-
 from forum_api.settings import LOGGER
 from forum_api.utils import get_uuid
+from sqlalchemy.dialects.postgresql import UUID
 
 db = SQLAlchemy()
 
@@ -22,22 +21,31 @@ class User(db.Model):
     posts = db.relationship("Post", backref="auth", cascade="all")
 
     def save(self):
+        """Addes the non-existing user to the DB."""
         db.session.add(self)
         db.session.commit()
 
     def delete(self):
+        """Deletes the user from the DB."""
         db.session.delete(self)
         db.session.commit
 
     @staticmethod
     def get_all():
+        """Returns a list of all User objects in the Users table"""
         return User.query.all()
 
     @staticmethod
     def get_user(username):
+       """Returns a user Object for a specific user, if it exists.
+
+        Args:
+            username: username to search for
+        """
         return User.query.filter_by(username=username).first()
 
     def to_json(self):
+        """Returns a JSON representation of the user."""
         return {
             "username": self.username,
             "is_admin": self.is_admin,
@@ -56,22 +64,31 @@ class Topic(db.Model):
     posts = db.relationship("Post", backref="topic", cascade="all")
 
     def save(self):
+        """Addes the non-existing topic to the DB."""
         db.session.add(self)
         db.session.commit()
 
     def delete(self):
+        """Deletes the topic from the DB."""
         db.session.delete(self)
         db.session.commit
 
     @staticmethod
     def get_all():
+        """Returns a list of all User objects in the Users table"""
         return Topic.query.all()
 
     @staticmethod
     def get_user(top_name):
+        """Returns a user Object for a specific user, if it exists.
+
+        Args:
+            username: username to search for
+        """
         return Topic.query.filter_by(name=top_name).first()
 
     def to_json(self):
+        """Returns a JSON representation of the topic."""
         return {"name": self.name, "descript": self.descript}
 
 
@@ -90,22 +107,31 @@ class Post(db.Model):
     replies = db.relationship("Reply", backref="post", cascade="all")
 
     def save(self):
+        """Saves the post to the database."""
         db.session.add(self)
         db.session.commit()
 
     def delete(self):
+        """Deletes the post from the database."""
         db.session.delete(self)
         db.session.commit
 
     @staticmethod
     def get_all():
+        """Returns a list of all post objects in the database."""
         return Post.query.all()
 
     @staticmethod
     def get_user(post_id):
+        """Returns a post object for a specific post.
+
+        Args:
+            post_id: The ID of the post to search for.
+        """
         return Post.query.filter_by(id=post_id).first()
 
     def to_json(self):
+        """Returns a JSON representation of the post."""
         return {
             "id": self.id,
             "title": self.title,

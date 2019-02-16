@@ -1,34 +1,9 @@
 """API Endpoints relating to topics"""
 from flask import Blueprint
-from flask_restful import Api, request, Resource, reqparse
+from flask_restful import Api, Resource, reqparse, request
+from forum_api.models import Topic, db
+from forum_api.parsers.topic_parse import post_parser
 from forum_api.settings import LOGGER
-
-
-
-put_parser = reqparse.RequestParser()
-put_parser.add_argument(
-    "description",
-    dest="descript",
-    location="json",
-    required=False,
-    help="Type: String. The Topic's updated description."
-)
-
-post_parser = reqparse.RequestParser()
-post_parser.add_argument(
-    "name",
-    dest="name",
-    location="json",
-    required=True,
-    help="Type: String. The new Topic's name, required.",
-)
-post_parser.add_argument(
-    "description",
-    dest="descript",
-    location="json",
-    required=False,
-    help="Type: String. The new Topic's description."
-)
 
 
 class TopicLookup(Resource):
@@ -38,7 +13,6 @@ class TopicLookup(Resource):
          Args:
             topicName: Topic to lookup
         """
-
         LOGGER.debug({"Requested Topic": topicName})
         topic = Topic.query.filter_by(name=topicName).first()
         if topic is not None:
@@ -46,9 +20,6 @@ class TopicLookup(Resource):
             return {"Topic": topic_json}, 200
 
         return {"message": "Topic not found"}, 404
-
-
-
 
     def put(self, topicName):
         """Update topic info
@@ -65,7 +36,7 @@ class TopicLookup(Resource):
 
         return {"message": "topic not found"}, 404
 
-    def delete(self,topicName):
+    def delete(self, topicName):
         """
 
         :param topicName:
@@ -81,7 +52,7 @@ class TopicLookup(Resource):
 
 class TopicList(Resource):
 
-    #this one needs work
+    # this one needs work
     def post(self):
         """Create a new Topic."""
 
@@ -109,9 +80,7 @@ class TopicList(Resource):
         return {"users": topics_json}, 200
 
 
-
-
 topics_bp = Blueprint("topics", __name__)
 api = Api(topics_bp)
-api.add_resource(TopicLookup, "/api/topics/<string:name>")
+api.add_resource(TopicLookup, "/api/topics/<string:topicName>")
 api.add_resource(TopicList, "/api/topics")
