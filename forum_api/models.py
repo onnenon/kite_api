@@ -37,7 +37,7 @@ class User(db.Model):
 
     @staticmethod
     def get_user(username):
-       """Returns a user Object for a specific user, if it exists.
+        """Returns a user Object for a specific user, if it exists.
 
         Args:
             username: username to search for
