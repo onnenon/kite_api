@@ -1,8 +1,8 @@
 """API Endpoints relating to topics"""
 from flask import Blueprint
-from flask_restful import Api, Resource, reqparse, request
+from flask_restful import Api, Resource
 from forum_api.models import Topic, db
-from forum_api.parsers.topic_parse import post_parser
+from forum_api.parsers.topic_parse import post_parser, put_parser
 from forum_api.settings import LOGGER
 
 
