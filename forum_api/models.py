@@ -1,8 +1,9 @@
 from datetime import datetime
 
 from flask_sqlalchemy import SQLAlchemy
-from forum_api.utils import get_uuid
 from sqlalchemy.dialects.postgresql import UUID
+
+from forum_api.utils import get_uuid
 
 db = SQLAlchemy()
 
@@ -27,7 +28,7 @@ class User(db.Model):
     def delete(self):
         """Deletes the user from the DB."""
         db.session.delete(self)
-        db.session.commit
+        db.session.commit()
 
     @staticmethod
     def get_all():
@@ -70,7 +71,7 @@ class Topic(db.Model):
     def delete(self):
         """Deletes the topic from the DB."""
         db.session.delete(self)
-        db.session.commit
+        db.session.commit()
 
     @staticmethod
     def get_all():
@@ -78,7 +79,7 @@ class Topic(db.Model):
         return Topic.query.all()
 
     @staticmethod
-    def get_user(top_name):
+    def get_topic(top_name):
         """Returns a user Object for a specific user, if it exists.
 
         Args:
@@ -86,9 +87,12 @@ class Topic(db.Model):
         """
         return Topic.query.filter_by(name=top_name).first()
 
-    def to_json(self):
+    def to_json(self, posts=False):
         """Returns a JSON representation of the topic."""
-        return {"name": self.name, "descript": self.descript}
+        data = {"name": self.name, "descript": self.descript}
+        if posts:
+            data["posts"] = [post.to_json() for post in self.posts]
+        return data
 
 
 class Post(db.Model):
@@ -113,7 +117,7 @@ class Post(db.Model):
     def delete(self):
         """Deletes the post from the database."""
         db.session.delete(self)
-        db.session.commit
+        db.session.commit()
 
     @staticmethod
     def get_all():
@@ -121,7 +125,7 @@ class Post(db.Model):
         return Post.query.all()
 
     @staticmethod
-    def get_user(post_id):
+    def get_post(post_id):
         """Returns a post object for a specific post.
 
         Args:
@@ -137,7 +141,7 @@ class Post(db.Model):
             "body": self.body,
             "author": self.author,
             "topic_name": self.topic_name,
-            "date": self.date_,
+            "date": self.date_.strftime("%s %H:%M %B %d %Y"),
         }
 
 
@@ -158,14 +162,14 @@ class Reply(db.Model):
 
     def delete(self):
         db.session.delete(self)
-        db.session.commit
+        db.session.commit()
 
     @staticmethod
     def get_all():
         return Reply.query.all()
 
     @staticmethod
-    def get_user(rep_id):
+    def get_reply(rep_id):
         return Reply.query.filter_by(id=rep_id).first()
 
     def to_json(self):
@@ -174,5 +178,5 @@ class Reply(db.Model):
             "body": self.body,
             "author": self.author,
             "post_id": self.post_id,
-            "date": self.date_,
+            "date": self.date_.strftime("%s %H:%M %B %d %Y"),
         }

@@ -1,0 +1,6 @@
+coverage
+pytest
+rednose
+mock
+nose
+isort

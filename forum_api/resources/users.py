@@ -2,8 +2,10 @@
 import bcrypt
 from flask import Blueprint
 from flask_restful import Api, Resource, request
+
 from forum_api.models import User, db
 from forum_api.parsers.user_parse import post_parser, put_parser
+from forum_api.resources.response import Error, Fail, Success
 from forum_api.settings import FORUM_ADMIN, LOGGER
 
 
@@ -100,9 +102,8 @@ class UserLookup(Resource):
         user = User.get_user(username)
         if user is not None:
             user_json = user.to_json()
-            return {"data": user_json}, 200
-
-        return {"error": "user not found"}, 404
+            return Success(user_json).to_json(), 200
+        return Fail("user not found").to_json(), 404
 
     def put(self, username):
         """Update user info.
@@ -124,9 +125,9 @@ class UserLookup(Resource):
                     args.password.encode("utf8"), bcrypt.gensalt()
                 )
             db.session.commit()
-            return {"message": f"{username} updated"}, 200
-
-        return {"error": "user not found"}, 404
+            data = {"message": f"{username} updated"}
+            return Success(data).to_json(), 200
+        return Fail(f"user {args.username} does not exist").to_json(), 404
 
     def delete(self, username):
         """Delete a user.
@@ -137,8 +138,8 @@ class UserLookup(Resource):
         user = User.get_user(username)
         if user is not None:
             user.delete()
-            return {"message": f"{username} deleted"}, 200
-        return {"error": "user not found"}, 404
+            return Success(None).to_json(), 204
+        return Fail(f"user {username} does not exist").to_json(), 404
 
 
 class UserList(Resource):
@@ -151,36 +152,35 @@ class UserList(Resource):
 
         Optional in Payload:
             bio: Bio of the user to be created.
-
         """
         args = post_parser.parse_args(strict=True)
         LOGGER.info({"Args": args})
 
         user = User.get_user(args.username)
-
         if user is None:
             try:
                 hashed = bcrypt.hashpw(args.password.encode("utf8"), bcrypt.gensalt())
                 record = User(username=args.username, pw_hash=hashed, bio=args.bio)
                 record.save()
-                return {"message": f"user {args.username} created"}, 201
+                data = {"message": f"user {args.username} created"}
+                return Success(data).to_json(), 201
             except Exception as e:
                 LOGGER.error({"Exception": e})
-                return {"error": e}, 500
-        return {"error": f"user {args.username} exists"}, 400
+                return Error(e).to_json, 500
+        return Fail(f"user {args.username} exists").to_json(), 400
 
     def get(self):
         """Get list of all users."""
         user_filter = {}
         users = User.get_all()
         users_json = [res.to_json() for res in users]
-        return {"data": users_json}, 200
+        return Success({"users": users_json}).to_json(), 200
 
 
 users_bp = Blueprint("users", __name__)
 api = Api(users_bp)
-api.add_resource(UserLookupV1, "/api/user/<string:username>")
-api.add_resource(UserListV1, "/api/user")
 
 api.add_resource(UserList, "/api/v2/users")
 api.add_resource(UserLookup, "/api/v2/users/<string:username>")
+api.add_resource(UserLookupV1, "/api/user/<string:username>")
+api.add_resource(UserListV1, "/api/user")

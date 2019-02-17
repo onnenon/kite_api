@@ -10,11 +10,11 @@ SECRET_KEY = os.getenv(
 )
 # DATABASE
 SQLALCHEMY_DATABASE_URI = "postgresql://{}:{}@{}:{}/{}".format(
-    os.getenv("API_DB_USERNAME"),
-    os.getenv("API_DB_PASSWORD"),
+    os.getenv("API_DB_USERNAME", "admin"),
+    os.getenv("API_DB_PASSWORD", "pass"),
     os.getenv("API_DB_HOST", "localhost"),
     os.getenv("API_DB_PORT", "5432"),
-    os.getenv("API_DB_NAME"),
+    os.getenv("API_DB_NAME", "forum_db"),
 )
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 

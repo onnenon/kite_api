@@ -1,4 +1,5 @@
 from flask_restful import reqparse
+
 from forum_api.utils import validate_length
 
 post_parser = reqparse.RequestParser()
