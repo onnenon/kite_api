@@ -1,4 +1,4 @@
-db-up:
+dbup:
 	docker run --rm -d \
 		--name test-db \
 		-p 5432:5432 \
@@ -7,7 +7,7 @@ db-up:
 		-e "POSTGRES_DB=forum_db" \
 		postgres:9.6-alpine
 
-db-down:
+dbdown:
 	docker kill test-db
 
 up:
@@ -21,3 +21,7 @@ down:
 
 run:
 	flask run --host=0.0.0.0
+
+test: dbup
+	pip install -r requirements-test.txt
+	bash run-tests.sh

@@ -1,6 +1,7 @@
 import re
 from unittest import TestCase
 from forum_api import app
+from forum_api.models import db
 from forum_api.settings import LOGGER
 
 
@@ -18,3 +19,8 @@ class ForumBaseTest(TestCase):
         data = re.sub("\n", " ", data)
         data = re.sub(" +", " ", data)
         return data
+
+    @classmethod
+    def tearDownClass(self):
+        with app.app_context():
+            db.drop_all()
