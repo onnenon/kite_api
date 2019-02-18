@@ -2,7 +2,6 @@
 
 from flask import Blueprint
 from flask_restful import Api, Resource
-
 from forum_api.models import Post, Topic, User, db
 from forum_api.parsers.post_parse import post_parser, put_parser
 from forum_api.resources.response import Error, Fail, Success
@@ -54,7 +53,15 @@ class Posts(Resource):
         return Success({"posts": posts_json}).to_json(), 200
 
     def post(self):
-        """Create a new post."""
+        """Create a new post.
+
+        Required Args:
+            topic: Topic to post to
+            author: Username of post author
+            body: Body text of post
+            title: Title of the post 
+
+        """
         args = post_parser.parse_args(strict=True)
         LOGGER.info({"Args": args})
 
@@ -75,7 +82,7 @@ class Posts(Resource):
         post_uuid = post.id
         db.session.commit()
 
-        return Success(post.to_json()).to_json(), 200
+        return Success(post.to_json()).to_json(), 201
 
 
 posts_bp = Blueprint("posts", __name__)
