@@ -1,8 +1,9 @@
 import re
+import bcrypt
 from unittest import TestCase
 from forum_api import app
-from forum_api.models import db
-from forum_api.settings import LOGGER
+from forum_api.models import db, User
+from forum_api.settings import LOGGER, FORUM_ADMIN
 
 
 class ForumBaseTest(TestCase):
@@ -24,3 +25,15 @@ class ForumBaseTest(TestCase):
     def tearDownClass(self):
         with app.app_context():
             db.drop_all()
+            db.create_all()
+            if User.get_user(username=FORUM_ADMIN.get("username")) is None:
+                hashed = bcrypt.hashpw(
+                    FORUM_ADMIN.get("password").encode("utf8"), bcrypt.gensalt()
+                )
+                admin = User(
+                    username=FORUM_ADMIN.get("username"),
+                    pw_hash=hashed,
+                    is_admin=True,
+                    is_mod=True,
+                )
+                admin.save()
