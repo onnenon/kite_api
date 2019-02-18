@@ -18,12 +18,12 @@ class PostUpdate(Resource):
             post_id: UUID of the post to lookup.
         """
         if not validate_uuid(post_id):
-            return {"error": "invalid UUID"}, 400
+            return Fail("invalid post ID").to_json(), 400
         LOGGER.debug({"Requested Post": post_id})
         post = Post.get_post(post_id)
         if post is not None:
             return Success({"post": post.to_json()}).to_json(), 200
-        return Fail(f"post with ID {post_id} not found"), 404
+        return Fail(f"post with ID {post_id} not found").to_json(), 404
 
     def put(self, post_id):
         """Update info for a specific post.
@@ -39,6 +39,8 @@ class PostUpdate(Resource):
         Args:
             post_id: UUID of the post to delete.
         """
+        if not validate_uuid(post_id):
+            return Fail("invalid post ID").to_json(), 400
         post = Post.get_post(post_id)
         if post is not None:
             post.delete()
@@ -59,10 +61,10 @@ class Posts(Resource):
         LOGGER.info({"Args": args})
 
         if User.get_user(args.author) is None:
-            return Fail(f"author {args.author} does not exist").to_json(), 400
+            return Fail(f"author {args.author} does not exist").to_json(), 404
 
         if Topic.get_topic(args.topic_name) is None:
-            return Fail(f"topic {args.topic_name} does not exist").to_json(), 400
+            return Fail(f"topic {args.topic_name} does not exist").to_json(), 404
 
         post = Post(
             title=args.title,

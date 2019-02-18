@@ -20,7 +20,7 @@ class TopicLookup(Resource):
         if topic is not None:
             topic_json = topic.to_json(posts=True)
             return Success({"topic": topic_json}).to_json(), 200
-        return Fail(f"topic {topicName} not found"), 404
+        return Fail(f"topic {topicName} not found").to_json(), 404
 
     def put(self, topicName):
         """Update topic info
@@ -30,8 +30,8 @@ class TopicLookup(Resource):
         args = put_parser.parse_args(strict=True)
         topic = Topic.get_topic(topicName)
         if topic is not None:
-            if args.description is not None:
-                topic.descript = args.description
+            if args.descript is not None:
+                topic.descript = args.descript
             db.session.commit()
             return Success({"message": f"{topicName} updated"}).to_json(), 200
         return Fail(f"topic {topicName} not found").to_json(), 404
