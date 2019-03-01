@@ -156,22 +156,27 @@ class Reply(db.Model):
     )
 
     def save(self):
+        """Saves the reply to the database."""
         db.session.add(self)
         db.session.commit()
 
     def delete(self):
+        """Deletes a reply from the database."""
         db.session.delete(self)
         db.session.commit()
 
     @staticmethod
     def get_all():
+        """Gets all replies from the database."""
         return Reply.query.all()
 
     @staticmethod
     def get_reply(rep_id):
+        """Queries the database for a specific reply_id."""
         return Reply.query.filter_by(id=rep_id).first()
 
     def to_json(self):
+        """Returns a json representation of a reply."""
         return {
             "id": self.id,
             "body": self.body,

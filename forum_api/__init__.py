@@ -8,6 +8,7 @@ app = Flask(__name__)
 app.config.from_object("forum_api.settings")
 
 register_blueprints(app)
+
 from forum_api.models import db, User
 
 db.init_app(app)
