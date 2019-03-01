@@ -1,10 +1,10 @@
 Flask
+Flask-SQLAlchemy
 Flask-Restful
+spylogger[pretty]
 psycopg2-binary
 bcrypt
 PyJWT
 Gunicorn
-Sanic
-SQLAlchemy
 
 # -e .
