@@ -22,7 +22,7 @@ def validate_uuid(uuid_string):
         UUID(uuid_string, version=4)
         return True
     except:
-        return
+        return False
 
 
 def validate_length(max_length, min_length, string_type):

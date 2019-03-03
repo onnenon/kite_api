@@ -16,6 +16,7 @@ class User(db.Model):
     is_mod = db.Column(db.Boolean(), nullable=False, default=False)
     post_count = db.Column(db.Integer(), nullable=False, default=0)
     bio = db.Column(db.String(50), default="")
+    displayName = db.Column(db.String(30), default="")
 
     posts = db.relationship("Post", backref="auth", cascade="all")
 
@@ -51,6 +52,7 @@ class User(db.Model):
             "is_mod": self.is_mod,
             "post_count": self.post_count,
             "bio": self.bio,
+            "displayName": self.displayName,
         }
 
 
@@ -102,6 +104,7 @@ class Post(db.Model):
     body = db.Column(db.String(255), nullable=False)
     author = db.Column(db.String(30), db.ForeignKey("users.username"), nullable=False)
     topic_name = db.Column(db.String(30), db.ForeignKey("topics.name"), nullable=False)
+    edited = db.Column(db.Boolean(), default=False)
     date_ = db.Column(
         db.DateTime(timezone=True), default=datetime.utcnow, nullable=False
     )
@@ -139,6 +142,7 @@ class Post(db.Model):
             "title": self.title,
             "body": self.body,
             "author": self.author,
+            "edited": self.edited,
             "topic_name": self.topic_name,
             "date": self.date_.strftime("%s %H:%M %B %d %Y"),
         }
@@ -151,6 +155,7 @@ class Reply(db.Model):
     body = db.Column(db.String(255), nullable=False)
     author = db.Column(db.String(30), db.ForeignKey("users.username"), nullable=False)
     post_id = db.Column(UUID, db.ForeignKey("posts.id"), nullable=False)
+    edited = db.Column(db.Boolean(), default=False)
     date_ = db.Column(
         db.DateTime(timezone=True), default=datetime.utcnow, nullable=False
     )
@@ -182,5 +187,6 @@ class Reply(db.Model):
             "body": self.body,
             "author": self.author,
             "post_id": self.post_id,
+            "edited": self.edited,
             "date": self.date_.strftime("%s %H:%M %B %d %Y"),
         }

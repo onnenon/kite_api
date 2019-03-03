@@ -30,7 +30,17 @@ class PostUpdate(Resource):
         Args:
             post_id: UUID of the post to update.
         """
-        pass
+        if not validate_uuid(post_id):
+            return Fail("invalid post ID").to_json(), 400
+
+        post = Post.get_post(post_id)
+        if post is not None:
+            args = put_parser.parse_args(strict=True)
+            post.body = args.body
+            post.edited = True
+            post.save()
+            return Success(f"post with ID {post_id} updated").to_json(), 200
+        return Fail(f"post with ID {post_id} not found").to_json(), 404
 
     def delete(self, post_id):
         """Delete a specific post from the database.

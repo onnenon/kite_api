@@ -5,19 +5,11 @@ post_parser = reqparse.RequestParser()
 put_parser = reqparse.RequestParser()
 
 post_parser.add_argument(
-    "title",
-    dest="title",
-    location="json",
-    required=True,
-    help="Type: String. The post's title, required. Length: 5-30 characters",
-    type=validate_length(30, 5, "title"),
-)
-post_parser.add_argument(
     "body",
     dest="body",
     location="json",
     required=True,
-    help="Type: String. The post's body, required. Length: 10-250 characters",
+    help="Type: String. The reply's body, required. Length: 10-255 characters",
     type=validate_length(255, 10, "body"),
 )
 post_parser.add_argument(
@@ -28,11 +20,11 @@ post_parser.add_argument(
     help="Type: String. The post's Author, required.",
 )
 post_parser.add_argument(
-    "topic",
-    dest="topic_name",
+    "post_id",
+    dest="post_id",
     location="json",
     required=True,
-    help="Type: String. The Topic the post belongs to, required. Length: 5-30 characters",
+    help="Type: String. The post the reply belongs to, required.",
 )
 
 put_parser.add_argument(
@@ -40,6 +32,6 @@ put_parser.add_argument(
     dest="body",
     location="json",
     required=True,
-    help="Type: String. The post's updated body.",
+    help="Type: String. The reply's updated body.",
     type=validate_length(255, 10, "body"),
 )

@@ -1,5 +1,6 @@
 """API Endpoints relating to users"""
 import bcrypt
+
 from flask import Blueprint
 from flask_restful import Api, Resource, request
 from forum_api.models import User, db
@@ -37,6 +38,8 @@ class UserLookup(Resource):
                 user.bio = args.bio
             if args.is_mod is not None:
                 user.is_mod = args.is_mod
+            if args.displayName is not None:
+                user.displayName = args.displayName
             if args.password is not None:
                 user.pw_hash = bcrypt.hashpw(
                     args.password.encode("utf8"), bcrypt.gensalt()
@@ -76,7 +79,12 @@ class UserList(Resource):
         user = User.get_user(args.username)
         if user is None:
             hashed = bcrypt.hashpw(args.password.encode("utf8"), bcrypt.gensalt())
-            record = User(username=args.username, pw_hash=hashed, bio=args.bio)
+            record = User(
+                username=args.username,
+                pw_hash=hashed,
+                bio=args.bio,
+                displayName=args.displayName,
+            )
             record.save()
             data = {"message": f"user {args.username} created"}
             return Success(data).to_json(), 201
