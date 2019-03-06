@@ -8,7 +8,6 @@ db = SQLAlchemy()
 
 
 class User(db.Model):
-    """Table holding users."""
 
     __tablename__ = "users"
 
