@@ -40,7 +40,6 @@ Tear everything down with:
 
 `docker-compose down`
 
-
 ### Optimize Imports
 
 

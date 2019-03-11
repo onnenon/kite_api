@@ -62,7 +62,7 @@ class TopicList(Resource):
             try:
                 record = Topic(name=args.name, descript=args.descript)
                 record.save()
-                return Success({"message": f"topic {args.name} created"}).to_json(), 200
+                return Success({"message": f"topic {args.name} created"}).to_json(), 201
             except Exception as e:
                 LOGGER.error({"Exception": e})
                 return Error(str(e)).to_json(), 500
