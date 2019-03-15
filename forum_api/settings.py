@@ -22,5 +22,5 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 FORUM_ADMIN = {
     "username": os.getenv("FORUM_ADMIN", "admin"),
-    "password": os.getenv("FORUM_ADMIN_PASS", "pass"),
+    "password": os.getenv("FORUM_ADMIN_PASS", "password"),
 }
