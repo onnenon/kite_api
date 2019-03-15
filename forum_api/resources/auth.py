@@ -1,7 +1,6 @@
 import time
 
 import bcrypt
-
 import jwt
 from flask import Blueprint
 from flask_restful import Api, Resource, request
