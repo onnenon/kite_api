@@ -1,10 +1,10 @@
 import json
 
 from forum_api.settings import FORUM_ADMIN, LOGGER
-from tests import ForumBaseTest
+from tests import ForumBaseTest as bt
 
 
-class UserTest(ForumBaseTest):
+class UserTest(bt):
     def test_001_load_admin(self):
         resp = self.app.get("/api/v2/users")
         data = json.loads(resp.data)
@@ -17,84 +17,87 @@ class UserTest(ForumBaseTest):
         self.assertEquals(data.get("data").get("users")[0].get("is_mod"), True)
 
     def test_002_user_post_success(self):
-        resp = self.app.post(
-            "/api/v2/users",
-            json={"username": "foo", "password": "testpass", "bio": "Test Bio"},
+        resp = self.post_user(username="TestUser")
+        self.logger.debug({"Resp Data": resp.json})
+        self.assertEquals(
+            "user TestUser created", bt.get_value(resp.json, "data", "message")
         )
-        data = json.loads(resp.data)
-        self.logger.debug({"Resp Data": data})
-        self.assertEquals(data.get("data").get("message"), "user foo created")
         self.assertEquals(resp.status_code, 201)
 
-    def test_003_user_post_fail(self):
-        resp = self.app.post(
-            "api/v2/users", json={"username": "foo", "password": "test"}
-        )
-        data = json.loads(resp.data)
-        self.logger.debug({"Resp Data": data})
-        self.assertEquals(resp.status_code, 400)
+    def test_003_user_post_same_user_fail(self):
+        self.post_user(username="Mike")
+        data = self.post_user(username="Mike")
+        self.logger.debug({"Resp Data": data.json})
+        self.assertEquals(data.status_code, 400)
 
     def test_004_user_record_get_success(self):
-        resp = self.app.get("/api/v2/users/foo")
-        data = json.loads(resp.data)
-        self.logger.debug({"Resp Data": data})
+        self.post_user("Foo")
+        resp = self.get_user("Foo")
+        self.logger.debug({"Resp Data": resp.json})
         self.assertEquals(resp.status_code, 200)
-        self.assertEquals(data.get("status"), "success")
-        self.assertEquals(data.get("data").get("username"), "foo")
+        self.assertEquals(resp.json.get("status"), "success")
+        self.assertEquals(bt.get_value(resp.json, "data", "username"), "Foo")
 
     def test_005_user_record_get_failure(self):
-        resp = self.app.get("/api/v2/users/bar")
-        data = json.loads(resp.data)
-        self.logger.debug({"Resp Data": data})
+        resp = self.get_user("bar")
+        self.logger.debug({"Resp Data": resp.json})
         self.assertEquals(resp.status_code, 404)
-        self.assertEquals(data.get("status"), "fail")
-        self.assertEquals(data.get("data").get("title"), "user bar not found")
+        self.assertEquals(resp.json.get("status"), "fail")
+        self.assertEquals(
+            bt.get_value(resp.json, "data", "title"), "user bar not found"
+        )
 
     def test_006_user_record_put_success(self):
-        resp = self.app.put(
-            "/api/v2/users/foo", json={"bio": "New Bio", "is_admin": True}
-        )
-        data = json.loads(resp.data)
-        self.logger.debug({"Resp Data": data})
+        self.post_user("Test6")
+        resp = self.put_user("Test6", bio="New Bio")
+        self.logger.debug({"Resp Data": resp.json})
         self.assertEquals(resp.status_code, 200)
-        self.assertEquals(data.get("status"), "success")
-        self.assertEquals(data.get("data").get("message"), "foo updated")
+        self.assertEquals(bt.get_value(resp.json, "data", "message"), "Test6 updated")
 
     def test_007_user_record_put_success_002(self):
+        self.post_user("Test7")
         resp = self.app.put(
             "/api/v2/users/foo", json={"password": "longpass", "is_mod": True}
         )
-        data = json.loads(resp.data)
-        self.logger.debug({"Resp Data": data})
+        resp = self.put_user("Test7", password="longpass", is_mod=True)
+        self.logger.debug({"Resp Data": resp.json})
         self.assertEquals(resp.status_code, 200)
-        self.assertEquals(data.get("status"), "success")
-        self.assertEquals(data.get("data").get("message"), "foo updated")
+        self.assertEquals(resp.json.get("status"), "success")
 
     def test_008_user_record_put_failure(self):
-        resp = self.app.put("/api/v2/users/bar", json={"bio": "something"})
-        data = json.loads(resp.data)
-        self.logger.debug({"Resp Data": data})
+        resp = self.put_user("Test8", bio="I Don't Exist")
+        self.logger.debug({"Resp Data": resp.json})
         self.assertEquals(resp.status_code, 404)
-        self.assertEquals(data.get("status"), "fail")
-        self.assertEquals(data.get("data").get("title"), "user bar does not exist")
+        self.assertEquals(resp.json.get("status"), "fail")
+        self.assertEquals(
+            bt.get_value(resp.json, "data", "title"), "user Test8 does not exist"
+        )
 
     def test_009_user_attributes_updated(self):
-        resp = self.app.get("/api/v2/users/foo")
-        data = json.loads(resp.data)
-        self.logger.debug({"Resp Data": data})
+        self.post_user("Test9")
+        resp = self.get_user("Test9")
+        self.assertFalse(bt.get_value(resp.json, "data", "is_admin"))
+        self.assertFalse(bt.get_value(resp.json, "data", "is_mod"))
+
+        self.put_user("Test9", is_mod=True, is_admin=True)
+
+        resp = self.get_user("Test9")
+        self.logger.debug({"Resp Data": resp.json})
         self.assertEquals(resp.status_code, 200)
-        self.assertTrue(data.get("data").get("is_admin"))
-        self.assertTrue(data.get("data").get("is_mod"))
-        self.assertEquals(data.get("data").get("bio"), "New Bio")
+
+        self.assertTrue(bt.get_value(resp.json, "data", "is_admin"))
+        self.assertTrue(bt.get_value(resp.json, "data", "is_mod"))
 
     def test_010_use_record_delete_success(self):
-        resp = self.app.delete("/api/v2/users/foo")
+        self.post_user("Test10")
+        resp = self.delete_user("Test10")
         self.assertEquals(resp.status_code, 204)
 
     def test_011_user_record_delete_failure(self):
-        resp = self.app.delete("/api/v2/users/foo")
-        data = json.loads(resp.data)
-        self.logger.debug({"Resp Data": data})
+        resp = self.delete_user("Test11")
+        self.logger.debug({"Resp Data": resp.json})
         self.assertEquals(resp.status_code, 404)
-        self.assertEquals(data.get("status"), "fail")
-        self.assertEquals(data.get("data").get("title"), "user foo does not exist")
+        self.assertEquals(resp.json.get("status"), "fail")
+        self.assertEquals(
+            bt.get_value(resp.json, "data", "title"), "user Test11 does not exist"
+        )
