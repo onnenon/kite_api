@@ -1,11 +1,13 @@
 import time
+from functools import wraps
 
 import bcrypt
 import jwt
 from flask import Blueprint
 from flask_restful import Api, Resource, request
-from forum_api.models import User
-from forum_api.settings import LOGGER, SECRET_KEY
+
+from kite.models import User
+from kite.settings import LOGGER, SECRET_KEY
 
 
 class Auth(Resource):
@@ -21,10 +23,12 @@ class Auth(Resource):
         if user is not None:
             try:
                 if bcrypt.checkpw(password.encode("utf8"), user.pw_hash):
-                    perm = get_permissions(user)
-                    LOGGER.debug({"Permissions": perm})
-
-                    payload = {"sub": username, "perm": perm, "iat": int(time.time())}
+                    payload = {
+                        "sub": username,
+                        "is_admin": user.is_admin,
+                        "is_mod": user.is_mod,
+                        "iat": int(time.time()),
+                    }
                     token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
                     LOGGER.debug({"Token": token})
                     return {"data": {"access_token": token.decode("utf8")}}, 200
@@ -39,12 +43,12 @@ class Refresh(Resource):
         pass
 
 
-def get_permissions(user):
-    if user.is_admin:
-        return "admin"
-    if user.is_mod:
-        return "mod"
-    return "user"
+def token_auth_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        token = request.authorization.get("token")
+        LOGGER.debug({"Token": token})
+        return f(*args, **kwargs)
 
 
 auth_bp = Blueprint("auth", __name__)

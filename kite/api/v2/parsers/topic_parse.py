@@ -1,5 +1,6 @@
 from flask_restful import reqparse
-from forum_api.utils import validate_length
+
+from kite.utils import validate_length
 
 put_parser = reqparse.RequestParser()
 put_parser.add_argument(

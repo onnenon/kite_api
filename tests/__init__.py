@@ -2,9 +2,9 @@ import re
 import json
 import bcrypt
 from unittest import TestCase
-from forum_api import app
-from forum_api.models import db, User
-from forum_api.settings import LOGGER, FORUM_ADMIN
+from kite import app
+from kite.models import db, User
+from kite.settings import LOGGER, FORUM_ADMIN
 
 
 class Resp:
@@ -20,7 +20,7 @@ class ForumBaseTest(TestCase):
     @classmethod
     def setUp(self):
         self.app = app.test_client()
-        app.config.from_object("forum_api.settings")
+        app.config.from_object("kite.settings")
 
     def clean_data(self, data):
         data = data.decode("utf-8")

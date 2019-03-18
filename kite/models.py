@@ -1,8 +1,9 @@
 from datetime import datetime
 
 from flask_sqlalchemy import SQLAlchemy
-from forum_api.utils import get_uuid
 from sqlalchemy.dialects.postgresql import UUID
+
+from kite.utils import get_uuid
 
 db = SQLAlchemy()
 

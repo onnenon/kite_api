@@ -1,7 +1,8 @@
 import json
 
-from forum_api.settings import FORUM_ADMIN, LOGGER
 from tests import ForumBaseTest as bt
+
+from kite.settings import FORUM_ADMIN, LOGGER
 
 
 class UserTest(bt):

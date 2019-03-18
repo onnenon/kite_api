@@ -1,10 +1,11 @@
 """API Endpoints relating to topics"""
 from flask import Blueprint
 from flask_restful import Api, Resource
-from forum_api.models import Topic, db
-from forum_api.parsers.topic_parse import post_parser, put_parser
-from forum_api.resources.response import Error, Fail, Success
-from forum_api.settings import LOGGER
+
+from kite.api.response import Error, Fail, Success
+from kite.api.v3.parsers.topic_parse import post_parser, put_parser
+from kite.models import Topic, db
+from kite.settings import LOGGER
 
 
 class TopicLookup(Resource):
@@ -76,7 +77,7 @@ class TopicList(Resource):
         return Success({"topics": topics_json}).to_json(), 200
 
 
-topics_bp = Blueprint("topics", __name__)
-api = Api(topics_bp)
-api.add_resource(TopicLookup, "/api/v2/topics/<string:topicName>")
-api.add_resource(TopicList, "/api/v2/topics")
+topics_bp_v3 = Blueprint("topics", __name__)
+api = Api(topics_bp_v3)
+api.add_resource(TopicLookup, "/api/v3/topics/<string:topicName>")
+api.add_resource(TopicList, "/api/v3/topics")

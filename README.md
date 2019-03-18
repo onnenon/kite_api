@@ -19,7 +19,7 @@ Inside the api container install the required python libraries from the requirem
 
 `pip install -r requirements.txt`
 
-Now install the forum_api as a python module to properly register all the modules with:
+Now install the kite as a python module to properly register all the modules with:
 
 `pip install -e .`
 

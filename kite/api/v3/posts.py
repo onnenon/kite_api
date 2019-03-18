@@ -2,14 +2,17 @@
 
 from flask import Blueprint
 from flask_restful import Api, Resource
-from forum_api.models import Post, Topic, User, db
-from forum_api.parsers.post_parse import post_parser, put_parser
-from forum_api.resources.response import Error, Fail, Success
-from forum_api.settings import LOGGER
-from forum_api.utils import validate_uuid
+
+from kite.api.response import Error, Fail, Success
+from kite.api.v3.parsers.post_parse import post_parser, put_parser
+from kite.models import Post, Topic, User, db
+from kite.settings import LOGGER
+from kite.utils import validate_uuid
 
 
 class PostUpdate(Resource):
+    method_decorators = [token]
+
     def get(self, post_id):
         """Get info on a specific post.
 
@@ -97,7 +100,7 @@ class Posts(Resource):
         return Success(post.to_json()).to_json(), 201
 
 
-posts_bp = Blueprint("posts", __name__)
-api = Api(posts_bp)
-api.add_resource(PostUpdate, "/api/v2/posts/<string:post_id>")
-api.add_resource(Posts, "/api/v2/posts")
+posts_bp_v3 = Blueprint("posts", __name__)
+api = Api(posts_bp_v3)
+api.add_resource(PostUpdate, "/api/v3/posts/<string:post_id>")
+api.add_resource(Posts, "/api/v3/posts")

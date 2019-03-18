@@ -2,11 +2,12 @@
 
 from flask import Blueprint
 from flask_restful import Api, Resource
-from forum_api.models import Post, Reply, User, db
-from forum_api.parsers.reply_parse import post_parser, put_parser
-from forum_api.resources.response import Error, Fail, Success
-from forum_api.settings import LOGGER
-from forum_api.utils import validate_uuid
+
+from kite.api.response import Error, Fail, Success
+from kite.api.v2.parsers.reply_parse import post_parser, put_parser
+from kite.models import Post, Reply, User, db
+from kite.settings import LOGGER
+from kite.utils import validate_uuid
 
 
 class ReplyUpdate(Resource):
@@ -91,7 +92,7 @@ class Replies(Resource):
         return Success(reply.to_json()).to_json(), 201
 
 
-replies_bp = Blueprint("replies", __name__)
-api = Api(replies_bp)
+replies_bp_v2 = Blueprint("replies", __name__)
+api = Api(replies_bp_v2)
 api.add_resource(ReplyUpdate, "/api/v2/replies/<string:reply_id>")
 api.add_resource(Replies, "/api/v2/replies")

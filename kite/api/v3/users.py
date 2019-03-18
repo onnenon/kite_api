@@ -2,10 +2,11 @@
 import bcrypt
 from flask import Blueprint
 from flask_restful import Api, Resource, request
-from forum_api.models import User, db
-from forum_api.parsers.user_parse import post_parser, put_parser
-from forum_api.resources.response import Error, Fail, Success
-from forum_api.settings import FORUM_ADMIN, LOGGER
+
+from kite.api.response import Error, Fail, Success
+from kite.api.v3.parsers.user_parse import post_parser, put_parser
+from kite.models import User, db
+from kite.settings import FORUM_ADMIN, LOGGER
 
 
 class UserLookup(Resource):
@@ -97,8 +98,8 @@ class UserList(Resource):
         return Success({"users": users_json}).to_json(), 200
 
 
-users_bp = Blueprint("users", __name__)
-api = Api(users_bp)
+users_bp_v3 = Blueprint("users", __name__)
+api = Api(users_bp_v3)
 
-api.add_resource(UserList, "/api/v2/users")
-api.add_resource(UserLookup, "/api/v2/users/<string:username>")
+api.add_resource(UserList, "/api/v3/users")
+api.add_resource(UserLookup, "/api/v3/users/<string:username>")
