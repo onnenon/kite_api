@@ -6,6 +6,8 @@ from kite import app
 from kite.models import db, User
 from kite.settings import LOGGER, FORUM_ADMIN
 
+API_VERSION = "v3"
+
 
 class Resp:
     def __init__(self, status_code, json):

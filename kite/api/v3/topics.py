@@ -77,7 +77,7 @@ class TopicList(Resource):
         return Success({"topics": topics_json}).to_json(), 200
 
 
-topics_bp_v3 = Blueprint("topics", __name__)
+topics_bp_v3 = Blueprint("topics v3", __name__)
 api = Api(topics_bp_v3)
 api.add_resource(TopicLookup, "/api/v3/topics/<string:topicName>")
 api.add_resource(TopicList, "/api/v3/topics")

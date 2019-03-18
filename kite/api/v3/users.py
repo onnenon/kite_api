@@ -98,7 +98,7 @@ class UserList(Resource):
         return Success({"users": users_json}).to_json(), 200
 
 
-users_bp_v3 = Blueprint("users", __name__)
+users_bp_v3 = Blueprint("users v3", __name__)
 api = Api(users_bp_v3)
 
 api.add_resource(UserList, "/api/v3/users")

@@ -5,13 +5,14 @@ from flask_restful import Api, Resource
 
 from kite.api.response import Error, Fail, Success
 from kite.api.v3.parsers.post_parse import post_parser, put_parser
+from kite.auth import token_auth_required
 from kite.models import Post, Topic, User, db
 from kite.settings import LOGGER
 from kite.utils import validate_uuid
 
 
 class PostUpdate(Resource):
-    method_decorators = [token]
+    method_decorators = [token_auth_required]
 
     def get(self, post_id):
         """Get info on a specific post.
@@ -100,7 +101,7 @@ class Posts(Resource):
         return Success(post.to_json()).to_json(), 201
 
 
-posts_bp_v3 = Blueprint("posts", __name__)
+posts_bp_v3 = Blueprint("posts v3", __name__)
 api = Api(posts_bp_v3)
 api.add_resource(PostUpdate, "/api/v3/posts/<string:post_id>")
 api.add_resource(Posts, "/api/v3/posts")

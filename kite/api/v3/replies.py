@@ -92,7 +92,7 @@ class Replies(Resource):
         return Success(reply.to_json()).to_json(), 201
 
 
-replies_bp_v3 = Blueprint("replies", __name__)
+replies_bp_v3 = Blueprint("replies v3", __name__)
 api = Api(replies_bp_v3)
 api.add_resource(ReplyUpdate, "/api/v3/replies/<string:reply_id>")
 api.add_resource(Replies, "/api/v3/replies")
