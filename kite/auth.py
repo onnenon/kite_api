@@ -6,6 +6,7 @@ import jwt
 from flask import Blueprint
 from flask_restful import Api, Resource, request
 
+from kite.api.response import Fail
 from kite.models import User
 from kite.settings import LOGGER, SECRET_KEY
 
@@ -31,7 +32,7 @@ class Auth(Resource):
                     }
                     token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
                     LOGGER.debug({"Token": token})
-                    return {"data": {"access_token": token.decode("utf8")}}, 200
+                    return {"data": {"access_token": token.decode("utf-8")}}, 200
             except Exception as e:
                 LOGGER.error({"Exception": e})
                 return {"errors": {"detail": "server error"}}, 500
@@ -44,11 +45,30 @@ class Refresh(Resource):
 
 
 def token_auth_required(f):
+    """Wraps a Restful API, validating the JWT and passing its payload to the 
+    endpoint.Api
+
+    Args: f: API Route.
+
+    Returns: 
+        calls API route if JWT is valid, else returns 401 response.
+    """
+
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        token = request.authorization.get("token")
-        LOGGER.debug({"Token": token})
-        return f(*args, **kwargs)
+        try:
+            token = request.headers.get("authorization").split(" ")[1]
+            LOGGER.debug({"Token": token})
+
+            decoded = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+            LOGGER.debug({"Decoded": decoded})
+        except Exception as e:
+            LOGGER.debug({"Message": str(e)})
+            return Fail("Invalid or missing JWT").to_json(), 401
+
+        return f(jwt_payload=decoded, *args, **kwargs)
+
+    return decorated_function
 
 
 auth_bp = Blueprint("auth", __name__)

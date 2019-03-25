@@ -4,12 +4,15 @@ from flask_restful import Api, Resource
 
 from kite.api.response import Error, Fail, Success
 from kite.api.v3.parsers.topic_parse import post_parser, put_parser
+from kite.auth import token_auth_required
 from kite.models import Topic, db
 from kite.settings import LOGGER
 
 
 class TopicLookup(Resource):
-    def get(self, topicName):
+    method_decorators = [token_auth_required]
+
+    def get(self, topicName, jwt_payload=None):
         """Get info on a topic
 
          Args:
@@ -22,7 +25,7 @@ class TopicLookup(Resource):
             return Success({"topic": topic_json}).to_json(), 200
         return Fail(f"topic {topicName} not found").to_json(), 404
 
-    def put(self, topicName):
+    def put(self, topicName, jwt_payload=None):
         """Update topic info
         Args:
             This topic will be updated
@@ -36,7 +39,7 @@ class TopicLookup(Resource):
             return Success({"message": f"{topicName} updated"}).to_json(), 200
         return Fail(f"topic {topicName} not found").to_json(), 404
 
-    def delete(self, topicName):
+    def delete(self, topicName, jwt_payload=None):
         """
 
         :param topicName:
@@ -50,9 +53,10 @@ class TopicLookup(Resource):
 
 
 class TopicList(Resource):
+    method_decorators = [token_auth_required]
 
     # this one needs work
-    def post(self):
+    def post(self, jwt_payload=None):
         """Create a new Topic."""
 
         args = post_parser.parse_args(strict=True)
@@ -69,7 +73,7 @@ class TopicList(Resource):
                 return Error(str(e)).to_json(), 500
         return Fail(f"topic {args.name} exists").to_json(), 400
 
-    def get(self):
+    def get(self, jwt_payload=None):
         """Get list of all topics."""
         topic_filter = {}
         topics = Topic.get_all()

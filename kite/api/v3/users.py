@@ -5,12 +5,15 @@ from flask_restful import Api, Resource, request
 
 from kite.api.response import Error, Fail, Success
 from kite.api.v3.parsers.user_parse import post_parser, put_parser
+from kite.auth import token_auth_required
 from kite.models import User, db
 from kite.settings import FORUM_ADMIN, LOGGER
 
 
 class UserLookup(Resource):
-    def get(self, username):
+    method_decorators = [token_auth_required]
+
+    def get(self, username, jwt_payload=None):
         """Get info on a user.
 
         Args:
@@ -23,7 +26,7 @@ class UserLookup(Resource):
             return Success(user_json).to_json(), 200
         return Fail(f"user {username} not found").to_json(), 404
 
-    def put(self, username):
+    def put(self, username, jwt_payload=None):
         """Update user info.
 
         Args:
@@ -49,7 +52,7 @@ class UserLookup(Resource):
             return Success(data).to_json(), 200
         return Fail(f"user {username} does not exist").to_json(), 404
 
-    def delete(self, username):
+    def delete(self, username, hwt_payload=None):
         """Delete a user.
 
         Args:
@@ -63,7 +66,10 @@ class UserLookup(Resource):
 
 
 class UserList(Resource):
-    def post(self):
+
+    method_decorators = [token_auth_required]
+
+    def post(self, jwt_payload=None):
         """Create a new user.
 
         Required in Payload:
@@ -90,8 +96,9 @@ class UserList(Resource):
             return Success(data).to_json(), 201
         return Fail(f"user {args.username} exists").to_json(), 400
 
-    def get(self):
+    def get(self, jwt_payload=None):
         """Get list of all users."""
+        LOGGER.debug({"JWT payload": jwt_payload})
         user_filter = {}
         users = User.get_all()
         users_json = [res.to_json() for res in users]

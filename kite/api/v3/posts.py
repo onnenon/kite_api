@@ -14,7 +14,7 @@ from kite.utils import validate_uuid
 class PostUpdate(Resource):
     method_decorators = [token_auth_required]
 
-    def get(self, post_id):
+    def get(self, post_id, jwt_payload=None):
         """Get info on a specific post.
 
         Args:
@@ -28,7 +28,7 @@ class PostUpdate(Resource):
             return Success({"post": post.to_json()}).to_json(), 200
         return Fail(f"post with ID {post_id} not found").to_json(), 404
 
-    def put(self, post_id):
+    def put(self, post_id, jwt_payload=None):
         """Update info for a specific post.
 
         Args:
@@ -46,7 +46,7 @@ class PostUpdate(Resource):
             return Success(f"post with ID {post_id} updated").to_json(), 200
         return Fail(f"post with ID {post_id} not found").to_json(), 404
 
-    def delete(self, post_id):
+    def delete(self, post_id, jwt_payload=None):
         """Delete a specific post from the database.
 
         Args:
@@ -62,13 +62,15 @@ class PostUpdate(Resource):
 
 
 class Posts(Resource):
-    def get(self):
+    method_decorators = [token_auth_required]
+
+    def get(self, jwt_payload=None):
         """Get list of existing posts."""
         posts = Post.get_all()
         posts_json = [post.to_json() for post in posts]
         return Success({"posts": posts_json}).to_json(), 200
 
-    def post(self):
+    def post(self, jwt_payload=None):
         """Create a new post.
 
         Required Args:

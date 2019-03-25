@@ -5,13 +5,16 @@ from flask_restful import Api, Resource
 
 from kite.api.response import Error, Fail, Success
 from kite.api.v3.parsers.reply_parse import post_parser, put_parser
+from kite.auth import token_auth_required
 from kite.models import Post, Reply, User, db
 from kite.settings import LOGGER
 from kite.utils import validate_uuid
 
 
 class ReplyUpdate(Resource):
-    def get(self, reply_id):
+    method_decorators = [token_auth_required]
+
+    def get(self, reply_id, jwt_payload=None):
         """Get info on a specific reply.
 
         Args:
@@ -25,7 +28,7 @@ class ReplyUpdate(Resource):
             return Success({"reply": reply.to_json()}).to_json(), 200
         return Fail(f"post with ID {reply_id} not found").to_json(), 404
 
-    def put(self, reply_id):
+    def put(self, reply_id, jwt_payload=None):
         """Update info for a specific reply.
 
         Args:
@@ -43,7 +46,7 @@ class ReplyUpdate(Resource):
             return Success(f"reply with ID {reply_id} updated").to_json(), 200
         return Fail(f"reply with ID {reply_id} not found").to_json(), 404
 
-    def delete(self, reply_id):
+    def delete(self, reply_id, jwt_payload=None):
         """Delete a specific reply from the database.
 
         Args:
@@ -59,13 +62,15 @@ class ReplyUpdate(Resource):
 
 
 class Replies(Resource):
-    def get(self):
+    method_decorators = [token_auth_required]
+
+    def get(self, jwt_payload=None):
         """Get list of existing replies."""
         replies = Reply.get_all()
         reply_json = [reply.to_json() for reply in replies]
         return Success({"replies": replies}).to_json(), 200
 
-    def post(self):
+    def post(self, jwt_payload=None):
         """Create a new reply.
 
         Required Args:
