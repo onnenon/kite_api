@@ -66,7 +66,7 @@ class UserLookup(Resource):
 
 
 class UserList(Resource):
-    def post(self, jwt_payload=None):
+    def post(self):
         """Create a new user.
 
         Required in Payload:
