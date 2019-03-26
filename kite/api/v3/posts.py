@@ -38,6 +38,10 @@ class PostUpdate(Resource):
             return Fail("invalid post ID").to_json(), 400
 
         post = Post.get_post(post_id)
+
+        if post.author != jwt_payload.username:
+            return Fail(f"Cannot edit other users posts").to_json(), 403
+
         if post is not None:
             args = put_parser.parse_args(strict=True)
             post.body = args.body
@@ -75,7 +79,6 @@ class Posts(Resource):
 
         Required Args:
             topic: Topic to post to
-            author: Username of post author
             body: Body text of post
             title: Title of the post 
 
@@ -83,8 +86,10 @@ class Posts(Resource):
         args = post_parser.parse_args(strict=True)
         LOGGER.info({"Args": args})
 
-        if User.get_user(args.author) is None:
-            return Fail(f"author {args.author} does not exist").to_json(), 404
+        user = User.get_user(jwt_payload.username)
+
+        if user is None:
+            return Fail(f"author does not exist").to_json(), 404
 
         if Topic.get_topic(args.topic_name) is None:
             return Fail(f"topic {args.topic_name} does not exist").to_json(), 404
@@ -92,13 +97,16 @@ class Posts(Resource):
         post = Post(
             title=args.title,
             body=args.body,
-            author=args.author,
+            author=user.username,
             topic_name=args.topic_name,
         )
         db.session.add(post)
         db.session.flush()
         post_uuid = post.id
         db.session.commit()
+
+        user.post_count += 1
+        user.save()
 
         return Success(post.to_json()).to_json(), 201
 

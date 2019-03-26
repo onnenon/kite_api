@@ -11,6 +11,13 @@ from kite.models import User
 from kite.settings import LOGGER, SECRET_KEY
 
 
+class JWTPayload:
+    def __init__(self, payload):
+        self.username = payload["sub"]
+        self.is_admin = payload["is_admin"]
+        self.is_mod = payload["is_mod"]
+
+
 class Auth(Resource):
     def post(self):
         if request.authorization is None:
@@ -66,7 +73,7 @@ def token_auth_required(f):
             LOGGER.debug({"Message": str(e)})
             return Fail("Invalid or missing JWT").to_json(), 401
 
-        return f(jwt_payload=decoded, *args, **kwargs)
+        return f(jwt_payload=JWTPayload(decoded), *args, **kwargs)
 
     return decorated_function
 
