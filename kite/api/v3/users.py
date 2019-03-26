@@ -40,7 +40,7 @@ class UserLookup(Resource):
             if args.is_admin is not None and jwt_payload.is_admin:
                 user.is_admin = args.is_admin
             if args.is_mod is not None and jwt_payload.is_mod:
-                user.is_mod = args.is_mod
+                user.is_mod = args.is_mod if not user.is_admin else True
             if args.displayName is not None and username == jwt_payload.username:
                 user.displayName = args.displayName
             if args.bio is not None and username == jwt_payload.username:
