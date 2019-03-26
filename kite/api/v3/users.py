@@ -31,19 +31,21 @@ class UserLookup(Resource):
 
         Args:
             username: The user to be updated.
+            jwt_payload: The payload data of the JWT passed in the request
         """
         args = put_parser.parse_args(strict=True)
         user = User.get_user(username)
+
         if user is not None:
-            if args.is_admin is not None:
+            if args.is_admin is not None and jwt_payload.is_admin:
                 user.is_admin = args.is_admin
-            if args.bio is not None:
-                user.bio = args.bio
-            if args.is_mod is not None:
+            if args.is_mod is not None and jwt_payload.is_mod:
                 user.is_mod = args.is_mod
-            if args.displayName is not None:
+            if args.displayName is not None and username == jwt_payload.username:
                 user.displayName = args.displayName
-            if args.password is not None:
+            if args.bio is not None and username == jwt_payload.username:
+                user.bio = args.bio
+            if args.password is not None and username == jwt_payload.username:
                 user.pw_hash = bcrypt.hashpw(
                     args.password.encode("utf8"), bcrypt.gensalt()
                 )
@@ -52,17 +54,24 @@ class UserLookup(Resource):
             return Success(data).to_json(), 200
         return Fail(f"user {username} does not exist").to_json(), 404
 
-    def delete(self, username, hwt_payload=None):
+    def delete(self, username, jwt_payload=None):
         """Delete a user.
 
         Args:
             username: The user to be deleted.
         """
         user = User.get_user(username)
-        if user is not None:
+        if user is None:
+            return Fail(f"user {username} does not exist").to_json(), 404
+
+        if user.username == jwt_payload.username or jwt_payload.is_admin:
             user.delete()
             return Success(None).to_json(), 204
-        return Fail(f"user {username} does not exist").to_json(), 404
+
+        return (
+            Fail(f"Invalid permissions, cannot delete user {username}").to_json(),
+            403,
+        )
 
 
 class UserList(Resource):
