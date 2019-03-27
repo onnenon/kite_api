@@ -22,13 +22,6 @@ post_parser.add_argument(
     type=validate_length(255, 10, "body"),
 )
 post_parser.add_argument(
-    "author",
-    dest="author",
-    location="json",
-    required=True,
-    help="Type: String. The post's Author, required.",
-)
-post_parser.add_argument(
     "topic",
     dest="topic_name",
     location="json",

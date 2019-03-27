@@ -13,7 +13,7 @@ class TopicLookup(Resource):
     method_decorators = [token_auth_required]
 
     def get(self, topicName, jwt_payload=None):
-        """Get info on a topic
+        """Get info on a topic.
 
          Args:
             topicName: Topic to lookup
@@ -26,7 +26,8 @@ class TopicLookup(Resource):
         return Fail(f"topic {topicName} not found").to_json(), 404
 
     def put(self, topicName, jwt_payload=None):
-        """Update topic info
+        """Update topic info.
+
         Args:
             This topic will be updated
         """
