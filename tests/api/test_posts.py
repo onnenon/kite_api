@@ -1,6 +1,6 @@
 import json
 
-from tests import ForumBaseTest
+from tests import API_VERSION, ForumBaseTest
 
 
 class PostTest(ForumBaseTest):

@@ -1,5 +1,5 @@
 BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-PACKAGE_NAME="forum_api"
+PACKAGE_NAME="kite"
 
 with_rednose="--rednose --force-color"
 with_coverage="--cover-html-dir=${BASE_DIR}/htmlcov --with-coverage --cover-html --cover-package=${PACKAGE_NAME} --cover-erase --cover-branches"

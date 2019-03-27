@@ -2,15 +2,19 @@
 
 from flask import Blueprint
 from flask_restful import Api, Resource
-from forum_api.models import Post, Topic, User, db
-from forum_api.parsers.post_parse import post_parser, put_parser
-from forum_api.resources.response import Error, Fail, Success
-from forum_api.settings import LOGGER
-from forum_api.utils import validate_uuid
+
+from kite.api.response import Error, Fail, Success
+from kite.api.v3.parsers.post_parse import post_parser, put_parser
+from kite.auth import token_auth_required
+from kite.models import Post, Topic, User, db
+from kite.settings import LOGGER
+from kite.utils import validate_uuid
 
 
 class PostUpdate(Resource):
-    def get(self, post_id):
+    method_decorators = [token_auth_required]
+
+    def get(self, post_id, jwt_payload=None):
         """Get info on a specific post.
 
         Args:
@@ -24,7 +28,7 @@ class PostUpdate(Resource):
             return Success({"post": post.to_json()}).to_json(), 200
         return Fail(f"post with ID {post_id} not found").to_json(), 404
 
-    def put(self, post_id):
+    def put(self, post_id, jwt_payload=None):
         """Update info for a specific post.
 
         Args:
@@ -42,7 +46,7 @@ class PostUpdate(Resource):
             return Success(f"post with ID {post_id} updated").to_json(), 200
         return Fail(f"post with ID {post_id} not found").to_json(), 404
 
-    def delete(self, post_id):
+    def delete(self, post_id, jwt_payload=None):
         """Delete a specific post from the database.
 
         Args:
@@ -58,13 +62,15 @@ class PostUpdate(Resource):
 
 
 class Posts(Resource):
-    def get(self):
+    method_decorators = [token_auth_required]
+
+    def get(self, jwt_payload=None):
         """Get list of existing posts."""
         posts = Post.get_all()
         posts_json = [post.to_json() for post in posts]
         return Success({"posts": posts_json}).to_json(), 200
 
-    def post(self):
+    def post(self, jwt_payload=None):
         """Create a new post.
 
         Required Args:
@@ -97,7 +103,7 @@ class Posts(Resource):
         return Success(post.to_json()).to_json(), 201
 
 
-posts_bp = Blueprint("posts", __name__)
-api = Api(posts_bp)
-api.add_resource(PostUpdate, "/api/v2/posts/<string:post_id>")
-api.add_resource(Posts, "/api/v2/posts")
+posts_bp_v3 = Blueprint("posts v3", __name__)
+api = Api(posts_bp_v3)
+api.add_resource(PostUpdate, "/api/v3/posts/<string:post_id>")
+api.add_resource(Posts, "/api/v3/posts")

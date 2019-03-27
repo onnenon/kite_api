@@ -1,14 +1,18 @@
 """API Endpoints relating to topics"""
 from flask import Blueprint
 from flask_restful import Api, Resource
-from forum_api.models import Topic, db
-from forum_api.parsers.topic_parse import post_parser, put_parser
-from forum_api.resources.response import Error, Fail, Success
-from forum_api.settings import LOGGER
+
+from kite.api.response import Error, Fail, Success
+from kite.api.v3.parsers.topic_parse import post_parser, put_parser
+from kite.auth import token_auth_required
+from kite.models import Topic, db
+from kite.settings import LOGGER
 
 
 class TopicLookup(Resource):
-    def get(self, topicName):
+    method_decorators = [token_auth_required]
+
+    def get(self, topicName, jwt_payload=None):
         """Get info on a topic
 
          Args:
@@ -21,7 +25,7 @@ class TopicLookup(Resource):
             return Success({"topic": topic_json}).to_json(), 200
         return Fail(f"topic {topicName} not found").to_json(), 404
 
-    def put(self, topicName):
+    def put(self, topicName, jwt_payload=None):
         """Update topic info
         Args:
             This topic will be updated
@@ -35,7 +39,7 @@ class TopicLookup(Resource):
             return Success({"message": f"{topicName} updated"}).to_json(), 200
         return Fail(f"topic {topicName} not found").to_json(), 404
 
-    def delete(self, topicName):
+    def delete(self, topicName, jwt_payload=None):
         """
 
         :param topicName:
@@ -49,9 +53,10 @@ class TopicLookup(Resource):
 
 
 class TopicList(Resource):
+    method_decorators = [token_auth_required]
 
     # this one needs work
-    def post(self):
+    def post(self, jwt_payload=None):
         """Create a new Topic."""
 
         args = post_parser.parse_args(strict=True)
@@ -62,13 +67,13 @@ class TopicList(Resource):
             try:
                 record = Topic(name=args.name, descript=args.descript)
                 record.save()
-                return Success({"message": f"topic {args.name} created"}).to_json(), 201
+                return Success({"message": f"topic {args.name} created"}).to_json(), 200
             except Exception as e:
                 LOGGER.error({"Exception": e})
                 return Error(str(e)).to_json(), 500
         return Fail(f"topic {args.name} exists").to_json(), 400
 
-    def get(self):
+    def get(self, jwt_payload=None):
         """Get list of all topics."""
         topic_filter = {}
         topics = Topic.get_all()
@@ -76,7 +81,7 @@ class TopicList(Resource):
         return Success({"topics": topics_json}).to_json(), 200
 
 
-topics_bp = Blueprint("topics", __name__)
-api = Api(topics_bp)
-api.add_resource(TopicLookup, "/api/v2/topics/<string:topicName>")
-api.add_resource(TopicList, "/api/v2/topics")
+topics_bp_v3 = Blueprint("topics v3", __name__)
+api = Api(topics_bp_v3)
+api.add_resource(TopicLookup, "/api/v3/topics/<string:topicName>")
+api.add_resource(TopicList, "/api/v3/topics")
