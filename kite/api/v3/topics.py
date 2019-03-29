@@ -19,7 +19,6 @@ class TopicLookup(Resource):
             topicName: Topic to lookup
         """
 
-
         LOGGER.debug({"Requested Topic": topicName})
         topic = Topic.get_topic(topicName)
         if topic is not None:
@@ -35,7 +34,10 @@ class TopicLookup(Resource):
         """
 
         if not (jwt_payload.is_admin or jwt_payload.is_mod):
-            return Fail("User does not have permissions for this request").to_json(), 403
+            return (
+                Fail("User does not have permissions for this request").to_json(),
+                403,
+            )
 
         else:
             args = put_parser.parse_args(strict=True)
