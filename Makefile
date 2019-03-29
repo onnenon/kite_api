@@ -31,3 +31,7 @@ scrub: clean
 	find . -name '*.egg-info' -type d -prune -exec rm -rf '{}' '+'
 	rm -rf htmlcov
 	rm -f .coverage
+
+format:
+	black kite tests
+	isort -rc kite tests
