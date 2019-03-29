@@ -52,17 +52,27 @@ class PostUpdate(Resource):
 
     def delete(self, post_id, jwt_payload=None):
         """Delete a specific post from the database.
-
+        Only available to admin, mod, and author
         Args:
             post_id: UUID of the post to delete.
         """
-        if not validate_uuid(post_id):
-            return Fail("invalid post ID").to_json(), 400
         post = Post.get_post(post_id)
-        if post is not None:
-            post.delete()
-            return Success(None).to_json(), 204
-        return Fail(f"Post ID {post_id} does not exist").to_json(), 404
+        if post is None:
+            return Fail(f"Post ID {post_id} does not exist").to_json(), 404
+        if jwt_payload.username != post.author or not (
+            jwt_payload.is_mod or jwt_payload.is_admin
+        ):
+            return (
+                Fail("Permission denied, you can not delete other's posts").to_json(),
+                403,
+            )
+        else:
+            if not validate_uuid(post_id):
+                return Fail("invalid post ID").to_json(), 400
+
+            if post is not None:
+                post.delete()
+                return Success(None).to_json(), 204
 
 
 class Posts(Resource):

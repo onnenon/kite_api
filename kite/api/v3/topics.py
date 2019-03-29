@@ -18,6 +18,7 @@ class TopicLookup(Resource):
          Args:
             topicName: Topic to lookup
         """
+
         LOGGER.debug({"Requested Topic": topicName})
         topic = Topic.get_topic(topicName)
         if topic is not None:
@@ -27,30 +28,43 @@ class TopicLookup(Resource):
 
     def put(self, topicName, jwt_payload=None):
         """Update topic info.
-
+        Only available to admins and mods
         Args:
             This topic will be updated
         """
-        args = put_parser.parse_args(strict=True)
-        topic = Topic.get_topic(topicName)
-        if topic is not None:
-            if args.descript is not None:
-                topic.descript = args.descript
-            db.session.commit()
-            return Success({"message": f"{topicName} updated"}).to_json(), 200
-        return Fail(f"topic {topicName} not found").to_json(), 404
+
+        if not (jwt_payload.is_admin or jwt_payload.is_mod):
+            return (
+                Fail("User does not have permissions for this request").to_json(),
+                403,
+            )
+
+        else:
+            args = put_parser.parse_args(strict=True)
+            topic = Topic.get_topic(topicName)
+            if topic is not None:
+                if args.descript is not None:
+                    topic.descript = args.descript
+                db.session.commit()
+                return Success({"message": f"{topicName} updated"}).to_json(), 200
+            return Fail(f"topic {topicName} not found").to_json(), 404
 
     def delete(self, topicName, jwt_payload=None):
-        """
+        """ Delete a topic
 
+        Only an admin has permission to delete (others should not be shown the option)
         :param topicName:
         :return:
         """
-        topic = Topic.get_topic(topicName)
-        if topic is not None:
-            topic.delete()
-            return Success({"message": f"{topicName} deleted"}).to_json(), 204
-        return Fail(f"topic {topicName} not found").to_json(), 404
+
+        if not jwt_payload.is_admin:
+            return Fail("User does not have permission").to_json(), 403
+        else:
+            topic = Topic.get_topic(topicName)
+            if topic is not None:
+                topic.delete()
+                return Success({"message": f"{topicName} deleted"}).to_json(), 204
+            return Fail(f"topic {topicName} not found").to_json(), 404
 
 
 class TopicList(Resource):
