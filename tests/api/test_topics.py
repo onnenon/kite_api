@@ -2,13 +2,19 @@ import json
 
 from tests import ForumBaseTest
 
+
 class TopicTest(ForumBaseTest):
     def setUp(self):
         super(TopicTest, self).setUp()
-        self.app.post("/api/v2/users", json={"username1": "foo", "password": "testpass"})
-        self.app.post("/api/v2/users", json={"username2": "bar", "password": "testpass"})
+        self.app.post(
+            "/api/v2/users", json={"username1": "foo", "password": "testpass"}
+        )
+        self.app.post(
+            "/api/v2/users", json={"username2": "bar", "password": "testpass"}
+        )
 
     """200 and not 201"""
+
     def test_001_create_topic(self):
         resp = self.app.post(
             "/api/v2/topics",
@@ -25,10 +31,7 @@ class TopicTest(ForumBaseTest):
     def test_002_post_topic_fail(self):
         resp = self.app.post(
             "/api/v2/topics",
-            json={
-                "name": "Basketball",
-                "description": "Basketball stuff",
-            },
+            json={"name": "Basketball", "description": "Basketball stuff"},
         )
         data = json.loads(resp.data)
         self.logger.debug({"Resp Data": data})
@@ -43,10 +46,7 @@ class TopicTest(ForumBaseTest):
     def test_004_get_topic_info(self):
         self.app.post(
             "/api/v2/topics",
-            json={
-                "name": "Basketball",
-                "description": "Basketball stuff",
-            },
+            json={"name": "Basketball", "description": "Basketball stuff"},
         )
         resp = self.app.get(f"/api/v2/topics/Basketball")
         data = json.loads(resp.data)
@@ -65,7 +65,6 @@ class TopicTest(ForumBaseTest):
         resp = self.app.delete(f"/api/v2/topics/Basketball")
         self.assertEquals(resp.status_code, 204)
 
-
     def test_006_delete_doesnt_exist(self):
         name = "notThere"
         resp = self.app.delete(f"/api/v2/topics/{name}")
@@ -74,14 +73,10 @@ class TopicTest(ForumBaseTest):
         self.assertEquals(resp.status_code, 404)
         self.assertEquals(data.get("data").get("title"), f"topic {name} not found")
 
-
     def test_007_topic_not_found(self):
         name = "saiuhsdfiuhiusiyfeu23982893s"
         resp = self.app.get(f"/api/v2/topics/{name}")
         data = json.loads(resp.data)
         self.logger.debug({"Resp Data": data})
         self.assertEquals(resp.status_code, 404)
-        self.assertEquals(
-            data.get("data").get("title"), f"topic {name} not found"
-        )
-
+        self.assertEquals(data.get("data").get("title"), f"topic {name} not found")
