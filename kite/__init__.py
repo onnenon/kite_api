@@ -1,15 +1,15 @@
 import bcrypt
 from flask import Flask
-from kite.api import register_blueprints
-from kite.settings import FORUM_ADMIN
 
+from kite.api import register_blueprints
+from kite.models import User, db
+from kite.settings import FORUM_ADMIN
 
 app = Flask(__name__)
 app.config.from_object("kite.settings")
 
 register_blueprints(app)
 
-from kite.models import db, User
 
 db.init_app(app)
 
