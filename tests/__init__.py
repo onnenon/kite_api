@@ -1,10 +1,12 @@
-import re
 import json
-import bcrypt
+import re
 from unittest import TestCase
+
+import bcrypt
+
 from kite import app
-from kite.models import db, User
-from kite.settings import LOGGER, FORUM_ADMIN
+from kite.models import User, db
+from kite.settings import FORUM_ADMIN, LOGGER
 
 API_VERSION = "v3"
 
