@@ -22,6 +22,7 @@ class ReplyUpdate(Resource):
         LOGGER.debug({"Requested reply": reply_id})
         reply = Reply.get_reply(reply_id)
         if reply is not None:
+            reply_json = reply.to_json()
             return Success({"reply": reply.to_json()}).to_json(), 200
         return Fail(f"post with ID {reply_id} not found").to_json(), 404
 
@@ -63,7 +64,7 @@ class Replies(Resource):
         """Get list of existing replies."""
         replies = Reply.get_all()
         reply_json = [reply.to_json() for reply in replies]
-        return Success({"replies": replies}).to_json(), 200
+        return Success({"replies": reply_json}).to_json(), 200
 
     def post(self):
         """Create a new reply.

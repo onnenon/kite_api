@@ -8,5 +8,6 @@ PyJWT
 Gunicorn
 isort
 black
+mock
 
 # -e .
