@@ -18,7 +18,7 @@ post_parser.add_argument(
     location="json",
     required=False,
     help="Type: String. The new user's bio.",
-    type=validate_length(50, 5, "bio"),
+    type=validate_length(100, 5, "bio"),
 )
 post_parser.add_argument(
     "password",
@@ -60,7 +60,7 @@ put_parser.add_argument(
     location="json",
     required=False,
     help="Type: String. The user's updated bio.",
-    type=validate_length(50, 5, "bio"),
+    type=validate_length(100, 5, "bio"),
 )
 put_parser.add_argument(
     "password",

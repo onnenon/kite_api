@@ -11,7 +11,7 @@ post_parser.add_argument(
     location="json",
     required=True,
     help="Type: String. The reply's body, required. Length: 10-255 characters",
-    type=validate_length(255, 10, "body"),
+    type=validate_length(500, 10, "body"),
 )
 post_parser.add_argument(
     "author",
@@ -34,5 +34,5 @@ put_parser.add_argument(
     location="json",
     required=True,
     help="Type: String. The reply's updated body.",
-    type=validate_length(255, 10, "body"),
+    type=validate_length(500, 10, "body"),
 )

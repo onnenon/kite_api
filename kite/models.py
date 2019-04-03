@@ -13,11 +13,11 @@ class User(db.Model):
     __tablename__ = "users"
 
     username = db.Column(db.String(30), nullable=False, primary_key=True)
-    pw_hash = db.Column(db.Binary(60), nullable=False)
+    pw_hash = db.Column(db.Binary(60), n"ullable=False)
     is_admin = db.Column(db.Boolean(), nullable=False, default=False)
     is_mod = db.Column(db.Boolean(), nullable=False, default=False)
     post_count = db.Column(db.Integer(), nullable=False, default=0)
-    bio = db.Column(db.String(50), default="")
+    bio = db.Column(db.String(100), default="")
     displayName = db.Column(db.String(30), default="")
 
     posts = db.relationship("Post", backref="auth", cascade="all")
@@ -102,9 +102,9 @@ class Post(db.Model):
     __tablename__ = "posts"
 
     id = db.Column(UUID, primary_key=True, default=get_uuid)
-    title = db.Column(db.String(30), nullable=False)
-    body = db.Column(db.String(255), nullable=False)
-    author = db.Column(db.String(30), db.ForeignKey("users.username"), nullable=False)
+    title = db.Column(db.String(50), nullable=False)
+    body = db.Column(db.String(1000), nullable=False)
+    author = db.Column(db.String(50), db.ForeignKey("users.username"), nullable=False)
     topic_name = db.Column(db.String(30), db.ForeignKey("topics.name"), nullable=False)
     edited = db.Column(db.Boolean(), default=False)
     date_ = db.Column(
@@ -154,8 +154,8 @@ class Reply(db.Model):
     __tablename__ = "replies"
 
     id = db.Column(UUID, primary_key=True, default=get_uuid)
-    body = db.Column(db.String(255), nullable=False)
-    author = db.Column(db.String(30), db.ForeignKey("users.username"), nullable=False)
+    body = db.Column(db.String(500), nullable=False)
+    author = db.Column(db.String(50), db.ForeignKey("users.username"), nullable=False)
     post_id = db.Column(UUID, db.ForeignKey("posts.id"), nullable=False)
     edited = db.Column(db.Boolean(), default=False)
     date_ = db.Column(

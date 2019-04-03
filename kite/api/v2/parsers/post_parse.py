@@ -11,7 +11,7 @@ post_parser.add_argument(
     location="json",
     required=True,
     help="Type: String. The post's title, required. Length: 5-30 characters",
-    type=validate_length(30, 5, "title"),
+    type=validate_length(50, 5, "title"),
 )
 post_parser.add_argument(
     "body",
@@ -19,7 +19,7 @@ post_parser.add_argument(
     location="json",
     required=True,
     help="Type: String. The post's body, required. Length: 10-250 characters",
-    type=validate_length(255, 10, "body"),
+    type=validate_length(1000, 10, "body"),
 )
 post_parser.add_argument(
     "author",
@@ -42,5 +42,5 @@ put_parser.add_argument(
     location="json",
     required=True,
     help="Type: String. The post's updated body.",
-    type=validate_length(255, 10, "body"),
+    type=validate_length(1000, 10, "body"),
 )
