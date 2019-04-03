@@ -1,6 +1,6 @@
 import json
+from unittest.mock import MagicMock, patch
 
-from mock import MagicMock, patch
 from tests import API_VERSION, ForumBaseTest
 
 from kite.api.response import Fail, Success

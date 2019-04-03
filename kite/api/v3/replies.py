@@ -60,13 +60,16 @@ class ReplyUpdate(Resource):
         reply = Reply.get_reply(reply_id)
         if reply is None:
             return Fail(f"Reply ID {reply_id} does not exist").to_json(), 404
-        if not (jwt_payload.is_admin or jwt_payload.is_mod or jwt_payload.username == reply.author):
+        if not (
+            jwt_payload.is_admin
+            or jwt_payload.is_mod
+            or jwt_payload.username == reply.author
+        ):
             return Fail("You do not have permission to delete replies").to_json(), 403
         else:
             if reply is not None:
                 reply.delete()
                 return Success(None).to_json(), 204
-
 
 
 class Replies(Resource):

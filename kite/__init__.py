@@ -11,7 +11,6 @@ app.config.from_object("kite.settings")
 
 register_blueprints(app)
 
-
 db.init_app(app)
 
 
