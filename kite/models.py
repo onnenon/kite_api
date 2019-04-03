@@ -13,7 +13,7 @@ class User(db.Model):
     __tablename__ = "users"
 
     username = db.Column(db.String(30), nullable=False, primary_key=True)
-    pw_hash = db.Column(db.Binary(60), n"ullable=False)
+    pw_hash = db.Column(db.Binary(60), nullable=False)
     is_admin = db.Column(db.Boolean(), nullable=False, default=False)
     is_mod = db.Column(db.Boolean(), nullable=False, default=False)
     post_count = db.Column(db.Integer(), nullable=False, default=0)
