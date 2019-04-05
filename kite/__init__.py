@@ -30,6 +30,6 @@ def init_forum():
         admin.save()
 
 
-@app.route("/status")
+@app.route("/api/status")
 def healthcheck():
     return jsonify({"Status": "Online"})
