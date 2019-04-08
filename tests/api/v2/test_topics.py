@@ -1,6 +1,15 @@
 import json
+from unittest.mock import MagicMock, patch
 
-from tests import ForumBaseTest
+from tests import API_VERSION, ForumBaseTest
+
+from kite.api.response import Fail, Success
+
+MOCK_REPLY = MagicMock()
+
+MOCK_REPLY().to_json.return_value = {"mock": "data"}
+
+
 
 
 class TopicTest(ForumBaseTest):
@@ -13,7 +22,6 @@ class TopicTest(ForumBaseTest):
             "/api/v2/users", json={"username2": "bar", "password": "testpass"}
         )
 
-    """200 and not 201"""
 
     def test_001_create_topic(self):
         resp = self.app.post(
@@ -80,3 +88,23 @@ class TopicTest(ForumBaseTest):
         self.logger.debug({"Resp Data": data})
         self.assertEquals(resp.status_code, 404)
         self.assertEquals(data.get("data").get("title"), f"topic {name} not found")
+
+    @patch("kite.api.v2.topics.Topic.get_all", side_effect=MOCK_REPLY)
+    def test_008_mock_get_topic_success(self, mock):
+        resp = self.app.get("/api/v2/topics")
+        data = json.loads(resp.data)
+        self.logger.debug({"Resp Data": data})
+        self.assertEquals(resp.status_code, 200)
+
+    @patch("kite.api.v2.topics.Topic.get_topic", side_effect=MOCK_REPLY)
+    def test_009_mock_get_topic_success(self, mock):
+        resp = self.app.get(f"/api/v2/topics/{self}")
+        data = json.loads(resp.data)
+        self.logger.debug({"Resp Data": data})
+        self.assertEquals(resp.status_code, 200)
+
+    @patch("kite.api.v2.topics.Topic.get_topic", return_value=None)
+    def test_010_mock_get_topic_failure_does_not_exist(self, mock):
+        resp = self.app.get(f"/api/v2/topics/{self}")
+        data = json.loads(resp.data)
+        self.assertEquals(resp.status_code, 404)
