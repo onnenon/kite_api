@@ -3,3 +3,4 @@ pytest
 rednose
 nose
 isort
+black
