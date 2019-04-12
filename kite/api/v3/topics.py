@@ -70,7 +70,7 @@ class TopicLookup(Resource):
 class TopicList(Resource):
     method_decorators = [token_auth_required]
 
-    # this one needs work
+
     def post(self, jwt_payload=None):
         """Create a new Topic."""
 
