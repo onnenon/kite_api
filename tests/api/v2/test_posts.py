@@ -126,3 +126,4 @@ class PostTest(ForumBaseTest):
         post_id = json.loads(resp.data).get("data").get("id")
         resp = self.app.delete(f"/api/v2/posts/{post_id}")
         self.assertEquals(resp.status_code, 204)
+

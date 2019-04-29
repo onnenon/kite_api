@@ -33,7 +33,7 @@ class TopicLookup(Resource):
             if args.descript is not None:
                 topic.descript = args.descript
             db.session.commit()
-            return Success({"message": f"{topicName} updated"}).to_json(), 200
+            return Success(f"{topicName} updated").to_json(), 200
         return Fail(f"topic {topicName} not found").to_json(), 404
 
     def delete(self, topicName):
@@ -45,7 +45,7 @@ class TopicLookup(Resource):
         topic = Topic.get_topic(topicName)
         if topic is not None:
             topic.delete()
-            return Success({"message": f"{topicName} deleted"}).to_json(), 204
+            return Success(f"{topicName} deleted").to_json(), 204
         return Fail(f"topic {topicName} not found").to_json(), 404
 
 

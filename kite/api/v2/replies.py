@@ -24,7 +24,7 @@ class ReplyUpdate(Resource):
         if reply is not None:
             reply_json = reply.to_json()
             return Success({"reply": reply.to_json()}).to_json(), 200
-        return Fail(f"post with ID {reply_id} not found").to_json(), 404
+        return Fail(f"reply with ID {reply_id} not found").to_json(), 404
 
     def put(self, reply_id):
         """Update info for a specific reply.

@@ -108,3 +108,22 @@ class TopicTest(ForumBaseTest):
         resp = self.app.get(f"/api/v2/topics/{self}")
         data = json.loads(resp.data)
         self.assertEquals(resp.status_code, 404)
+    def test_011_update_topic_success(self):
+        resp = self.app.post(
+            "/api/v2/topics",
+            json={
+                "name": "Basketball",
+                "description": "Everything related to Basketball",
+            },
+        )
+        name = "Basketball"
+        resp = self.app.put(
+            f"/api/v2/topics/{name}",
+            json={
+                "description": "Mostly related to Basketball"
+            }
+        )
+        data = json.loads(resp.data)
+        self.logger.debug({"Resp Data": data})
+        self.assertEquals(resp.status_code, 200)
+        self.assertEquals(data.get("data"), f"{name} updated")
