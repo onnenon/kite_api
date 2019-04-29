@@ -127,3 +127,24 @@ class PostTest(ForumBaseTest):
         resp = self.app.delete(f"/api/v2/posts/{post_id}")
         self.assertEquals(resp.status_code, 204)
 
+    def test_011_update_post(self):
+        resp = self.app.post(
+            "/api/v2/posts",
+            json={
+                "topic": "Cars",
+                "author": "foo",
+                "title": "I Like Cars",
+                "body": "I like them",
+            },
+        )
+        post_id = json.loads(resp.data).get("data").get("id")
+        resp = self.app.put(
+            f"/api/v2/posts/{post_id}",
+            json={
+                "body": "I kinda like them",
+            },
+        )
+        data = json.loads(resp.data)
+        self.logger.debug({"Resp Data": data})
+        self.assertEquals(resp.status_code, 200)
+        self.assertEquals(data.get("data"), f"post with ID {post_id} updated")
