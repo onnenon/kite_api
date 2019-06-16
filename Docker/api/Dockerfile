@@ -2,7 +2,7 @@ FROM  python:3.6-alpine
 LABEL author="Stephen Onnen"
 
 
-ADD Backend /opt 
+ADD . /opt 
 
 WORKDIR /opt
 
