@@ -8,7 +8,7 @@ from kite.settings import FORUM_ADMIN, LOGGER
 
 class UserTest(bt):
     def test_001_load_admin(self):
-        resp = self.app.get("/api/v2/users")
+        resp = self.app.get("/api/v3/users")
         data = json.loads(resp.data)
         self.logger.debug({"Resp Data": data})
         self.assertEquals(
@@ -59,7 +59,7 @@ class UserTest(bt):
     def test_007_user_record_put_success_002(self):
         self.post_user("Test7")
         resp = self.app.put(
-            "/api/v2/users/foo", json={"password": "longpass", "is_mod": True}
+            "/api/v3/users/foo", json={"password": "longpass", "is_mod": True}
         )
         resp = self.put_user("Test7", password="longpass", is_mod=True)
         self.logger.debug({"Resp Data": resp.json})
