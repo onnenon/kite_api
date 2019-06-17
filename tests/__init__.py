@@ -52,7 +52,7 @@ class ForumBaseTest(TestCase):
     @classmethod
     def post_user(self, username, password="password", bio="test bio", displayName=""):
         resp = self.app.post(
-            "/api/v2/users",
+            "/api/v3/users",
             json={
                 "username": username,
                 "password": password,
@@ -64,7 +64,7 @@ class ForumBaseTest(TestCase):
 
     @classmethod
     def get_user(self, username=""):
-        resp = self.app.get(f"/api/v2/users/{username}")
+        resp = self.app.get(f"/api/v3/users/{username}")
         return Resp(resp.status_code, json.loads(resp.data))
 
     def put_user(
@@ -77,7 +77,7 @@ class ForumBaseTest(TestCase):
         is_admin=False,
     ):
         resp = self.app.put(
-            f"/api/v2/users/{username}",
+            f"/api/v3/users/{username}",
             json={
                 "password": password,
                 "bio": bio,
@@ -90,7 +90,7 @@ class ForumBaseTest(TestCase):
 
     @classmethod
     def delete_user(self, username):
-        resp = self.app.delete(f"/api/v2/users/{username}")
+        resp = self.app.delete(f"/api/v3/users/{username}")
         if not resp.data:
             return Resp(resp.status_code, None)
         return Resp(resp.status_code, json.loads(resp.data))

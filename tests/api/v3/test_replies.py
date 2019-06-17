@@ -16,39 +16,39 @@ class ReplyTest(ForumBaseTest):
 
     def setUp(self):
         super(ReplyTest, self).setUp()
-        self.app.post("/api/v2/users", json={"username": "foo", "password": "testpass"})
-        self.app.post("/api/v2/users", json={"username": "bar", "password": "testpass"})
+        self.app.post("/api/v3/users", json={"username": "foo", "password": "testpass"})
+        self.app.post("/api/v3/users", json={"username": "bar", "password": "testpass"})
         self.app.post(
-            "/api/v2/topics", json={"name": "Cars", "description": "Things about cars."})
+            "/api/v3/topics", json={"name": "Cars", "description": "Things about cars."})
 
 
 
-    @patch("kite.api.v2.replies.Reply.get_all", side_effect=MOCK_REPLY)
+    @patch("kite.api.v3.replies.Reply.get_all", side_effect=MOCK_REPLY)
     def test_001_get_replies_success(self, mock):
-        resp = self.app.get("/api/v2/replies")
+        resp = self.app.get("/api/v3/replies")
         data = json.loads(resp.data)
         self.logger.debug({"Resp Data": data})
         self.assertEquals(resp.status_code, 200)
 
-    @patch("kite.api.v2.replies.Reply.get_reply", side_effect=MOCK_REPLY)
+    @patch("kite.api.v3.replies.Reply.get_reply", side_effect=MOCK_REPLY)
     def test_002_get_reply_success(self, mock):
-        resp = self.app.get(f"/api/v2/replies/{self.valid_uuid}")
+        resp = self.app.get(f"/api/v3/replies/{self.valid_uuid}")
         data = json.loads(resp.data)
         self.logger.debug({"Resp Data": data})
         self.assertEquals(resp.status_code, 200)
 
-    @patch("kite.api.v2.replies.Reply.get_reply", return_value=None)
+    @patch("kite.api.v3.replies.Reply.get_reply", return_value=None)
     def test_003_get_reply_failure_does_not_exist(self, mock):
-        resp = self.app.get(f"/api/v2/replies/{self.valid_uuid}")
+        resp = self.app.get(f"/api/v3/replies/{self.valid_uuid}")
         data = json.loads(resp.data)
         self.assertEquals(resp.status_code, 404)
 
     def test_004_get_reply_failure_invalid_uuid(self):
-        resp = self.app.get(f"/api/v2/replies/{self.invalid_uuid}")
+        resp = self.app.get(f"/api/v3/replies/{self.invalid_uuid}")
         self.assertEquals(resp.status_code, 400)
     def test_005_create_reply(self):
         resp = self.app.post(
-            "/api/v2/posts",
+            "/api/v3/posts",
             json={
                 "topic": "Cars",
                 "author": "foo",
@@ -58,7 +58,7 @@ class ReplyTest(ForumBaseTest):
         )
         post_id = json.loads(resp.data).get("data").get("id")
         resp = self.app.post(
-            "/api/v2/replies",
+            "/api/v3/replies",
             json={
                 "author": "bar",
                 "body": "I don't like your post",
@@ -73,7 +73,7 @@ class ReplyTest(ForumBaseTest):
 
     def test_006_create_reply_author_fail(self):
         resp = self.app.post(
-            "/api/v2/posts",
+            "/api/v3/posts",
             json={
                 "topic": "Cars",
                 "author": "foo",
@@ -83,7 +83,7 @@ class ReplyTest(ForumBaseTest):
         )
         post_id = json.loads(resp.data).get("data").get("id")
         resp = self.app.post(
-            "/api/v2/replies",
+            "/api/v3/replies",
             json={
                 "author": "xxx",
                 "body": "I don't like your post",
@@ -95,14 +95,14 @@ class ReplyTest(ForumBaseTest):
         self.assertEquals(resp.status_code, 404)
 
     def test_007_get_posts(self):
-        resp = self.app.get("/api/v2/replies")
+        resp = self.app.get("/api/v3/replies")
         data = json.loads(resp.data)
         self.logger.debug({"Resp Data": data})
         self.assertEquals(resp.status_code, 200)
 
     def test_008_get_reply_info(self):
         resp = self.app.post(
-            "/api/v2/posts",
+            "/api/v3/posts",
             json={
                 "topic": "Cars",
                 "author": "foo",
@@ -112,7 +112,7 @@ class ReplyTest(ForumBaseTest):
         )
         post_id = json.loads(resp.data).get("data").get("id")
         resp = self.app.post(
-            "/api/v2/replies",
+            "/api/v3/replies",
             json={
                 "author": "bar",
                 "body": "I don't like your post",
@@ -120,14 +120,14 @@ class ReplyTest(ForumBaseTest):
             },
         )
         reply_id = json.loads(resp.data).get("data").get("id")
-        resp = self.app.get(f"/api/v2/replies/{reply_id}")
+        resp = self.app.get(f"/api/v3/replies/{reply_id}")
         data = json.loads(resp.data)
         self.logger.debug({"Resp Data": data})
         self.assertEquals(resp.status_code, 200)
         self.assertEquals(data.get("data").get("reply").get("body"), "I don't like your post")
 
     def test_009_invalid_reply_id(self):
-        resp = self.app.get("/api/v2/replies/notid")
+        resp = self.app.get("/api/v3/replies/notid")
         data = json.loads(resp.data)
         self.logger.debug({"Resp Data": data})
         self.assertEquals(resp.status_code, 400)
@@ -135,7 +135,7 @@ class ReplyTest(ForumBaseTest):
 
     def test_010_delete_success(self):
         resp = self.app.post(
-            "/api/v2/posts",
+            "/api/v3/posts",
             json={
                 "topic": "Cars",
                 "author": "foo",
@@ -145,7 +145,7 @@ class ReplyTest(ForumBaseTest):
         )
         post_id = json.loads(resp.data).get("data").get("id")
         resp = self.app.post(
-            "/api/v2/replies",
+            "/api/v3/replies",
             json={
                 "author": "bar",
                 "body": "I don't like your post",
@@ -153,12 +153,12 @@ class ReplyTest(ForumBaseTest):
             },
         )
         reply_id = json.loads(resp.data).get("data").get("id")
-        resp = self.app.delete(f"/api/v2/replies/{reply_id}")
+        resp = self.app.delete(f"/api/v3/replies/{reply_id}")
         self.assertEquals(resp.status_code, 204)
 
     def test_011_reply_not_found(self):
         reply_id = "e98ffad9-9381-4f56-a91a-1a67b830e9ee"
-        resp = self.app.get(f"/api/v2/replies/{reply_id}")
+        resp = self.app.get(f"/api/v3/replies/{reply_id}")
         data = json.loads(resp.data)
         self.logger.debug({"Resp Data": data})
         self.assertEquals(resp.status_code, 404)
@@ -168,7 +168,7 @@ class ReplyTest(ForumBaseTest):
 
     def test_012_delete_doesnt_exist(self):
         reply_id = "e98ffad9-9381-4f56-a91a-1a67b830e9ee"
-        resp = self.app.delete(f"/api/v2/replies/{reply_id}")
+        resp = self.app.delete(f"/api/v3/replies/{reply_id}")
         data = json.loads(resp.data)
         self.logger.debug({"Resp Data": data})
         self.assertEquals(resp.status_code, 404)
@@ -177,7 +177,7 @@ class ReplyTest(ForumBaseTest):
         )
 
     def test_013_delete_invalid_uuid(self):
-        resp = self.app.delete("/api/v2/replies/notuuid")
+        resp = self.app.delete("/api/v3/replies/notuuid")
         data = json.loads(resp.data)
         self.logger.debug({"Resp Data": data})
         self.assertEquals(resp.status_code, 400)
@@ -185,7 +185,7 @@ class ReplyTest(ForumBaseTest):
 
     def test_014_update_reply(self):
         resp = self.app.post(
-            "/api/v2/posts",
+            "/api/v3/posts",
             json={
                 "topic": "Cars",
                 "author": "foo",
@@ -195,7 +195,7 @@ class ReplyTest(ForumBaseTest):
         )
         post_id = json.loads(resp.data).get("data").get("id")
         resp = self.app.post(
-            "/api/v2/replies",
+            "/api/v3/replies",
             json={
                 "author": "bar",
                 "body": "I don't like your post",
@@ -203,7 +203,7 @@ class ReplyTest(ForumBaseTest):
             },
         )
         reply_id = json.loads(resp.data).get("data").get("id")
-        resp = self.app.put(f"/api/v2/replies/{reply_id}",
+        resp = self.app.put(f"/api/v3/replies/{reply_id}",
             json={
 
                 "body": "I like your post",
